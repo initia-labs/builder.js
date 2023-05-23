@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "InitiaLabs",
@@ -61,7 +61,6 @@
     "@types/ffi-napi": "^4.0.7",
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.18",
-    "@types/ref-array-di": "^1.2.5",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "buffer": "^6.0.3",
@@ -79,7 +78,6 @@
   },
   "dependencies": {
     "ffi-napi": "^4.0.3",
-    "ref-array-di": "^1.2.2",
     "ref-napi": "^3.0.3",
     "ref-struct-di": "^1.1.1"
   }

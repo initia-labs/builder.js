@@ -14,6 +14,8 @@ $ npm install @initia-labs/builder.js
 import { MoveBuilder } from '@initia-labs/builder.js';
 
 async function buildExample() {
+    // recommend to use full package path, not relative path
+    // ex) path.resolve(__dirname, "../relative_path")
     const builder = new MoveBuilder(/* path to move package */, {});
 
     // execute move compiler via ffi
