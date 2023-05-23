@@ -2,8 +2,8 @@ name: Build & Test
 on:
   pull_request:
     paths:
-      - '**.ts'
-      - '**.js'
+      - 'src/**'
+      - 'libinitia.**'
       - 'package.json'
       - 'package-lock.json'
   push:
@@ -11,8 +11,8 @@ on:
       - main
       - 'release/*'
     paths:
-      - '**.ts'
-      - '**.js'
+      - 'src/**'
+      - 'libinitia.**'
       - 'package.json'
       - 'package-lock.json'
 
