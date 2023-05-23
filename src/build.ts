@@ -66,6 +66,12 @@ export class MoveBuilder {
     this.buildOptions = buildOptions;
   }
 
+  /**
+   *
+   * Execute move compiler to generate move bytecode
+   *
+   * @returns if success return "ok", else throw an error
+   */
   public async build(): Promise<string | null> {
     // make empty err msg
     const errMsg = ref.alloc(UnmanagedVectorType);
@@ -137,6 +143,13 @@ export class MoveBuilder {
     });
   }
 
+  /**
+   *
+   * Return compiled Move module bytecode.
+   *
+   * @param moduleName the module name to retrieve
+   * @returns the module bytecode
+   */
   public async get(moduleName: string): Promise<Buffer> {
     const moveTomlPath = path.join(this.packagePath, 'Move.toml');
     const moveToml = await readFile(moveTomlPath);
