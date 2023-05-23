@@ -5,13 +5,13 @@ This SDK is a Javascript wrapper for Initia Move Compiler using [ffi-napi](https
 ## How to install
 
 ```
-$ npm install @initia-labs/builder.js
+$ npm install @initia/builder.js
 ```
 
 ### How to use
 
 ```ts
-import { MoveBuilder } from '@initia-labs/builder.js';
+import { MoveBuilder } from '@initia/builder.js';
 
 async function buildExample() {
     // recommend to use full package path, not relative path
