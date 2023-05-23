@@ -1,6 +1,6 @@
 # initia builder.js
 
-This SDK is a Javascript wrapper for Initia Move Compiler which is implemented using [ffi-napi](https://www.npmjs.com/package/ffi-napi) library.
+This SDK is a Javascript wrapper for Initia Move Compiler using [ffi-napi](https://www.npmjs.com/package/ffi-napi) library.
 
 ## How to install
 
