@@ -1,0 +1,33 @@
+name: Build & Test
+on:
+  pull_request:
+    paths:
+      - '**.ts'
+      - '**.js'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches:
+      - main
+      - 'release/*'
+    paths:
+      - '**.ts'
+      - '**.js'
+      - 'package.json'
+      - 'package-lock.json'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & Test tsc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: |
+          npm install
+          npm run build
+          npm run test

@@ -1,0 +1,25 @@
+---
+compiled_package_info:
+  package_name: DummyContract
+  address_alias_instantiation:
+    initia_std: "0000000000000000000000000000000000000000000000000000000000000001"
+    relayer: 0000000000000000000000003d18d54532fc42e567090852db6eb21fa528f952
+    std: "0000000000000000000000000000000000000000000000000000000000000001"
+  source_digest: D87F6462214C761C1DAD7EC15E1E45333D6225CAE36C84E327034B93110AA706
+  build_flags:
+    dev_mode: false
+    test_mode: false
+    generate_docs: false
+    generate_abis: false
+    install_dir: ""
+    force_recompilation: false
+    lock_file: ~
+    additional_named_addresses: {}
+    architecture: ~
+    fetch_deps_only: false
+    skip_fetch_latest_git_deps: false
+    bytecode_version: ~
+dependencies:
+  - InitiaStdlib
+  - MoveNursery
+  - MoveStdlib
