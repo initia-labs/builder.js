@@ -42,7 +42,7 @@ const InitiaCompilerArgumentType = StructType({
 ///////////////////////
 // Function Definitions
 
-const libinitiavm = ffi.Library('libinitia', {
+const libinitiavm = ffi.Library(path.resolve(__dirname, '../libinitia'), {
   build_move_package: [
     UnmanagedVectorType,
     [UnmanagedVectorPtr, InitiaCompilerArgumentType],
