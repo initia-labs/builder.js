@@ -3,8 +3,6 @@ name = "DummyContract"
 version = "1.0.0"
 
 [dependencies]
-MoveNursery = { git = "https://github.com/initia-labs/initiavm.git", subdir = "crates/stdlib/src/move_nursery", rev = "12eec6f8b84751c398b79cf73355d3249d3ff3fd" }
-InitiaStdlib = { git = "https://github.com/initia-labs/initiavm.git", subdir = "crates/stdlib/src/initia_stdlib", rev = "12eec6f8b84751c398b79cf73355d3249d3ff3fd" }
 
 [addresses]
 std = "0x1"
