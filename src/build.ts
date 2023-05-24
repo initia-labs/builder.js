@@ -42,7 +42,18 @@ const InitiaCompilerArgumentType = StructType({
 ///////////////////////
 // Function Definitions
 
-const libinitiavm = ffi.Library(path.resolve(__dirname, '../libinitia'), {
+let libraryName: string;
+if (process.platform == 'darwin') {
+  libraryName = 'libinitia.dylib';
+} else if (process.platform == 'linux' && process.arch == 'arm64') {
+  libraryName = 'libinitia.aarch64.so';
+} else if (process.platform == 'linux' && process.arch == 'x64') {
+  libraryName = 'libinitia.x86_64.so';
+} else {
+  throw new Error(`${process.platform}/${process.arch} not supported`);
+}
+
+const libinitiavm = ffi.Library(path.resolve(__dirname, `../${libraryName}`), {
   build_move_package: [
     UnmanagedVectorType,
     [UnmanagedVectorPtr, InitiaCompilerArgumentType],
