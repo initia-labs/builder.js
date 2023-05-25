@@ -25,7 +25,7 @@ async function buildExample() {
     const compiledModuleBytes = await builder.get(/* module name */);
     console.info(compiledModuleBytes.toString('hex'));
 
-    // change module name what you want
+    // change module name to what you want
     const nameConvertedModuleBytes = await MoveBuilder.convert_module_name(compiledModuleBytes, /* new module name */);
     console.info(nameConvertedModuleBytes.toString('hex'));
 }
