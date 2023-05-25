@@ -58,6 +58,10 @@ const libinitiavm = ffi.Library(path.resolve(__dirname, `../${libraryName}`), {
     UnmanagedVectorType,
     [UnmanagedVectorPtr, InitiaCompilerArgumentType],
   ],
+  convert_module_name: [
+    UnmanagedVectorType,
+    [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
+  ],
 });
 
 ///////////////////////
@@ -142,7 +146,7 @@ export class MoveBuilder {
 
             reject(new Error(errorMessage));
           } else if (res.is_none) {
-            resolve(null);
+            reject(new Error('unknown error'));
           } else {
             const resMessage = Buffer.from(
               res.ptr.buffer.slice(0, res.len as number)
@@ -186,6 +190,66 @@ export class MoveBuilder {
     );
 
     return readFile(bytecodePath);
+  }
+
+  /**
+   *
+   * @param precompiledBinary precompiled module bytes code
+   * @param moduleName the module name to change
+   * @returns name converted module bytes
+   */
+  public static async convert_module_name(
+    precompiledBinary: Buffer,
+    moduleName: string
+  ): Promise<Buffer> {
+    // make empty err msg
+    const errMsg = ref.alloc(UnmanagedVectorType);
+    const rawErrMsg = errMsg.deref();
+
+    rawErrMsg.is_none = true;
+    rawErrMsg.ptr = ref.NULL;
+    rawErrMsg.len = 0;
+    rawErrMsg.cap = 0;
+
+    const precompiledView = ref.alloc(ByteSliceViewType);
+    const rawPrecompiledView = precompiledView.deref();
+    rawPrecompiledView.is_nil = false;
+    rawPrecompiledView.ptr = ref.allocCString(
+      precompiledBinary.toString('base64'),
+      'base64'
+    );
+    rawPrecompiledView.len = precompiledBinary.length;
+
+    const moduleNameView = ref.alloc(ByteSliceViewType);
+    const rawModuleNameView = moduleNameView.deref();
+    rawModuleNameView.is_nil = false;
+    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8');
+    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length;
+
+    return new Promise((resolve, reject) => {
+      libinitiavm.convert_module_name.async(
+        errMsg,
+        rawPrecompiledView,
+        rawModuleNameView,
+        function (_err, res) {
+          const resErrMsg = errMsg.deref();
+          if (!resErrMsg.is_none) {
+            const errorMessage = Buffer.from(
+              resErrMsg.ptr.buffer.slice(0, resErrMsg.len as number)
+            ).toString('utf-8');
+
+            reject(new Error(errorMessage));
+          } else if (res.is_none) {
+            reject(new Error('unknown error'));
+          } else {
+            const resultBinary = Buffer.from(
+              res.ptr.buffer.slice(0, res.len as number)
+            );
+            resolve(resultBinary);
+          }
+        }
+      );
+    });
   }
 }
 
