@@ -3,41 +3,15 @@ import * as ref from 'ref-napi';
 import struct = require('ref-struct-di');
 import path = require('path');
 import { readFile } from 'fs/promises';
-
-///////////////////
-// Type Definitions
-
-const StructType = struct(ref);
-const UnmanagedVectorType = StructType({
-  is_none: ref.types.bool,
-  ptr: ref.refType(ref.types.CString),
-  len: ref.types.size_t,
-  cap: ref.types.size_t,
-});
-const UnmanagedVectorPtr = ref.refType(UnmanagedVectorType);
-
-const ByteSliceViewType = StructType({
-  is_nil: ref.types.bool,
-  ptr: ref.refType(ref.types.CString),
-  len: ref.types.size_t,
-});
-
-const InitiaCompilerBuildConfig = StructType({
-  dev_mode: ref.types.bool,
-  test_mode: ref.types.bool,
-  generate_docs: ref.types.bool,
-  generate_abis: ref.types.bool,
-  install_dir: ByteSliceViewType,
-  force_recompilation: ref.types.bool,
-  fetch_deps_only: ref.types.bool,
-  skip_fetch_latest_git_deps: ref.types.bool,
-  bytecode_version: ref.types.uint32,
-});
-const InitiaCompilerArgumentType = StructType({
-  package_path: ByteSliceViewType,
-  verbose: ref.types.bool,
-  build_config: InitiaCompilerBuildConfig,
-});
+import {
+  UnmanagedVectorType,
+  UnmanagedVectorPtr,
+  InitiaCompilerArgumentType,
+  ByteSliceViewType,
+  BuildOptions,
+  TestOptions,
+  InitiaCompilerTestOptionType,
+} from './types';
 
 ///////////////////////
 // Function Definitions
@@ -62,10 +36,15 @@ const libinitiavm = ffi.Library(path.resolve(__dirname, `../${libraryName}`), {
     UnmanagedVectorType,
     [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
   ],
+  test_move_package: [
+    UnmanagedVectorType,
+    [
+      UnmanagedVectorPtr,
+      InitiaCompilerArgumentType,
+      InitiaCompilerTestOptionType,
+    ],
+  ],
 });
-
-///////////////////////
-// Implementation
 
 export class MoveBuilder {
   private packagePath: string;
@@ -81,22 +60,7 @@ export class MoveBuilder {
     this.buildOptions = buildOptions;
   }
 
-  /**
-   *
-   * Execute move compiler to generate move bytecode
-   *
-   * @returns if success return "ok", else throw an error
-   */
-  public async build(): Promise<string | null> {
-    // make empty err msg
-    const errMsg = ref.alloc(UnmanagedVectorType);
-    const rawErrMsg = errMsg.deref();
-
-    rawErrMsg.is_none = true;
-    rawErrMsg.ptr = ref.NULL;
-    rawErrMsg.len = 0;
-    rawErrMsg.cap = 0;
-
+  makeRawBuildConfig() {
     // make compiler args
     const compilerArgs = ref.alloc(InitiaCompilerArgumentType);
     const rawArgs = compilerArgs.deref();
@@ -132,6 +96,26 @@ export class MoveBuilder {
       this.buildOptions.installDir || '',
       'utf-8'
     ).length;
+
+    return rawArgs;
+  }
+
+  /**
+   *
+   * Execute move compiler to generate move bytecode
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async build(): Promise<string | null> {
+    const errMsg = ref.alloc(UnmanagedVectorType);
+    const rawErrMsg = errMsg.deref();
+
+    rawErrMsg.is_none = true;
+    rawErrMsg.ptr = ref.NULL;
+    rawErrMsg.len = 0;
+    rawErrMsg.cap = 0;
+
+    const rawArgs = this.makeRawBuildConfig();
 
     return new Promise((resolve, reject) => {
       libinitiavm.build_move_package.async(
@@ -251,16 +235,70 @@ export class MoveBuilder {
       );
     });
   }
-}
 
-export interface BuildOptions {
-  devMode?: boolean;
-  testMode?: boolean;
-  generateDocs?: boolean;
-  generateAbis?: boolean;
-  installDir?: string;
-  forceRecompilation?: boolean;
-  fetchDepsOnly?: boolean;
-  skipFetchLatestGitDeps?: boolean;
-  bytecodeVersion?: number;
+  /**
+   *
+   * Execute move compiler to unittest
+   *
+   * @param testOptions move package test options
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async test(options: TestOptions): Promise<string | null> {
+    const errMsg = ref.alloc(UnmanagedVectorType);
+    const rawErrMsg = errMsg.deref();
+
+    rawErrMsg.is_none = true;
+    rawErrMsg.ptr = ref.NULL;
+    rawErrMsg.len = 0;
+    rawErrMsg.cap = 0;
+
+    const buildRawArgs = this.makeRawBuildConfig();
+
+    buildRawArgs.package_path.is_nil = false;
+    buildRawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8');
+    buildRawArgs.package_path.len = Buffer.from(
+      this.packagePath,
+      'utf-8'
+    ).length;
+
+    const testArgs = ref.alloc(InitiaCompilerTestOptionType);
+    const testRawArgs = testArgs.deref();
+
+    testRawArgs.gas_limit = options.gasLimit || 1000000000;
+    testRawArgs.list = options.list || false;
+    testRawArgs.num_threads = options.numThreads || 1;
+    testRawArgs.report_statistics = options.reportStatistics || false;
+    testRawArgs.report_storage_on_error = options.reportStorageOnError || false;
+    testRawArgs.ignore_compile_warnings =
+      options.ignoreCompileWarnings || false;
+    testRawArgs.check_stackless_vm = options.checkStacklessVm || false;
+    testRawArgs.verbose_mode = options.verboseMode || false;
+    testRawArgs.compute_coverage = options.computeCoverage || false;
+
+    return new Promise((resolve, reject) => {
+      libinitiavm.test_move_package.async(
+        errMsg,
+        buildRawArgs,
+        testRawArgs,
+        function (_err, res) {
+          const resErrMsg = errMsg.deref();
+          if (!resErrMsg.is_none) {
+            const errorMessage = Buffer.from(
+              resErrMsg.ptr.buffer.slice(0, resErrMsg.len as number)
+            ).toString('utf-8');
+
+            reject(new Error(errorMessage));
+          } else if (res.is_none) {
+            reject(new Error('unknown error'));
+          } else {
+            const resMessage = Buffer.from(
+              res.ptr.buffer.slice(0, res.len as number)
+            ).toString('utf-8');
+            resolve(resMessage);
+          }
+        }
+      );
+    });
+  }
 }
