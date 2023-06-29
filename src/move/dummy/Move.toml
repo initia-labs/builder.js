@@ -3,7 +3,6 @@ name = "DummyContract"
 version = "1.0.0"
 
 [dependencies]
-InitiaStdlib = { git = "https://github.com/initia-labs/initiavm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
 std = "0x1"
