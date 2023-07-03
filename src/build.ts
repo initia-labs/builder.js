@@ -100,7 +100,7 @@ export class MoveBuilder {
    *
    * @returns if success return "ok", else throw an error
    */
-  public async clean(options: CleanOptions): Promise<FFIResult> {
+  public async clean(options?: CleanOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg();
     const rawArgs = this.makeRawBuildConfig();
 
