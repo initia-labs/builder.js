@@ -51,12 +51,12 @@ describe('build move package', () => {
 
 describe('test move package', () => {
   // need time to get dependencies
-  jest.setTimeout(100000);
+  jest.setTimeout(200000);
   const contractDir = 'contract/table';
 
   it('test correctly', async () => {
     const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {});
-    expect(await builder.test({})).toEqual('ok');
+    expect(await builder.test()).toEqual('ok');
   });
 });
 
