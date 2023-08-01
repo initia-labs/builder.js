@@ -1,71 +1,19 @@
-import * as ffi from 'ffi-napi';
 import * as ref from 'ref-napi';
-import struct = require('ref-struct-di');
 import path = require('path');
 import { readFile } from 'fs/promises';
-
-///////////////////
-// Type Definitions
-
-const StructType = struct(ref);
-const UnmanagedVectorType = StructType({
-  is_none: ref.types.bool,
-  ptr: ref.refType(ref.types.CString),
-  len: ref.types.size_t,
-  cap: ref.types.size_t,
-});
-const UnmanagedVectorPtr = ref.refType(UnmanagedVectorType);
-
-const ByteSliceViewType = StructType({
-  is_nil: ref.types.bool,
-  ptr: ref.refType(ref.types.CString),
-  len: ref.types.size_t,
-});
-
-const InitiaCompilerBuildConfig = StructType({
-  dev_mode: ref.types.bool,
-  test_mode: ref.types.bool,
-  generate_docs: ref.types.bool,
-  generate_abis: ref.types.bool,
-  install_dir: ByteSliceViewType,
-  force_recompilation: ref.types.bool,
-  fetch_deps_only: ref.types.bool,
-  skip_fetch_latest_git_deps: ref.types.bool,
-  bytecode_version: ref.types.uint32,
-});
-const InitiaCompilerArgumentType = StructType({
-  package_path: ByteSliceViewType,
-  verbose: ref.types.bool,
-  build_config: InitiaCompilerBuildConfig,
-});
-
-///////////////////////
-// Function Definitions
-
-let libraryName: string;
-if (process.platform == 'darwin') {
-  libraryName = 'libinitia.dylib';
-} else if (process.platform == 'linux' && process.arch == 'arm64') {
-  libraryName = 'libinitia.aarch64.so';
-} else if (process.platform == 'linux' && process.arch == 'x64') {
-  libraryName = 'libinitia.x86_64.so';
-} else {
-  throw new Error(`${process.platform}/${process.arch} not supported`);
-}
-
-const libinitiavm = ffi.Library(path.resolve(__dirname, `../${libraryName}`), {
-  build_move_package: [
-    UnmanagedVectorType,
-    [UnmanagedVectorPtr, InitiaCompilerArgumentType],
-  ],
-  convert_module_name: [
-    UnmanagedVectorType,
-    [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
-  ],
-});
-
-///////////////////////
-// Implementation
+import {
+  InitiaCompilerArgumentType,
+  ByteSliceViewType,
+  BuildOptions,
+  TestOptions,
+  InitiaCompilerTestOptionType,
+  FFIResult,
+  CleanOptions,
+  ProveOptions,
+  InitiaCompilerProveOptionType,
+} from './types';
+import { libinitiavm } from './vm';
+import { handleResponse, createRawErrMsg } from './utils';
 
 export class MoveBuilder {
   private packagePath: string;
@@ -81,22 +29,7 @@ export class MoveBuilder {
     this.buildOptions = buildOptions;
   }
 
-  /**
-   *
-   * Execute move compiler to generate move bytecode
-   *
-   * @returns if success return "ok", else throw an error
-   */
-  public async build(): Promise<string | null> {
-    // make empty err msg
-    const errMsg = ref.alloc(UnmanagedVectorType);
-    const rawErrMsg = errMsg.deref();
-
-    rawErrMsg.is_none = true;
-    rawErrMsg.ptr = ref.NULL;
-    rawErrMsg.len = 0;
-    rawErrMsg.cap = 0;
-
+  makeRawBuildConfig() {
     // make compiler args
     const compilerArgs = ref.alloc(InitiaCompilerArgumentType);
     const rawArgs = compilerArgs.deref();
@@ -133,29 +66,71 @@ export class MoveBuilder {
       'utf-8'
     ).length;
 
-    return new Promise((resolve, reject) => {
-      libinitiavm.build_move_package.async(
-        errMsg,
-        rawArgs,
-        function (_err, res) {
-          const resErrMsg = errMsg.deref();
-          if (!resErrMsg.is_none) {
-            const errorMessage = Buffer.from(
-              resErrMsg.ptr.buffer.slice(0, resErrMsg.len as number)
-            ).toString('utf-8');
+    return rawArgs;
+  }
 
-            reject(new Error(errorMessage));
-          } else if (res.is_none) {
-            reject(new Error('unknown error'));
-          } else {
-            const resMessage = Buffer.from(
-              res.ptr.buffer.slice(0, res.len as number)
-            ).toString('utf-8');
-            resolve(resMessage);
-          }
-        }
-      );
-    });
+  /**
+   *
+   * Execute move compiler to generate new move package
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async new(packageName: string): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+    const rawArgs = this.makeRawBuildConfig();
+
+    const packageNameView = ref.alloc(ByteSliceViewType);
+    const rawPackageNameView = packageNameView.deref();
+    rawPackageNameView.is_nil = false;
+    rawPackageNameView.ptr = ref.allocCString(packageName, 'utf-8');
+    rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length;
+
+    return handleResponse(
+      libinitiavm.create_new_move_package.async,
+      errMsg,
+      'utf-8',
+      rawArgs,
+      packageNameView
+    );
+  }
+
+  /**
+   *
+   * Execute move compiler to clean move package
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async clean(options?: CleanOptions): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+    const rawArgs = this.makeRawBuildConfig();
+
+    return handleResponse(
+      libinitiavm.clean_move_package.async,
+      errMsg,
+      'utf-8',
+      rawArgs,
+      options?.cleanCache || false,
+      options?.cleanByProduct || false,
+      options?.force === undefined ? true : options?.force
+    );
+  }
+
+  /**
+   *
+   * Execute move compiler to generate move bytecode
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async build(): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+    const rawArgs = this.makeRawBuildConfig();
+
+    return handleResponse(
+      libinitiavm.build_move_package.async,
+      errMsg,
+      'utf-8',
+      rawArgs
+    );
   }
 
   /**
@@ -196,20 +171,14 @@ export class MoveBuilder {
    *
    * @param precompiledBinary precompiled module bytes code
    * @param moduleName the module name to change
+   *
    * @returns name converted module bytes
    */
   public static async convert_module_name(
     precompiledBinary: Buffer,
     moduleName: string
-  ): Promise<Buffer> {
-    // make empty err msg
-    const errMsg = ref.alloc(UnmanagedVectorType);
-    const rawErrMsg = errMsg.deref();
-
-    rawErrMsg.is_none = true;
-    rawErrMsg.ptr = ref.NULL;
-    rawErrMsg.len = 0;
-    rawErrMsg.cap = 0;
+  ): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
 
     const precompiledView = ref.alloc(ByteSliceViewType);
     const rawPrecompiledView = precompiledView.deref();
@@ -226,41 +195,146 @@ export class MoveBuilder {
     rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8');
     rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length;
 
-    return new Promise((resolve, reject) => {
-      libinitiavm.convert_module_name.async(
-        errMsg,
-        rawPrecompiledView,
-        rawModuleNameView,
-        function (_err, res) {
-          const resErrMsg = errMsg.deref();
-          if (!resErrMsg.is_none) {
-            const errorMessage = Buffer.from(
-              resErrMsg.ptr.buffer.slice(0, resErrMsg.len as number)
-            ).toString('utf-8');
-
-            reject(new Error(errorMessage));
-          } else if (res.is_none) {
-            reject(new Error('unknown error'));
-          } else {
-            const resultBinary = Buffer.from(
-              res.ptr.buffer.slice(0, res.len as number)
-            );
-            resolve(resultBinary);
-          }
-        }
-      );
-    });
+    return handleResponse(
+      libinitiavm.convert_module_name.async,
+      errMsg,
+      'buffer',
+      rawPrecompiledView,
+      rawModuleNameView
+    );
   }
-}
 
-export interface BuildOptions {
-  devMode?: boolean;
-  testMode?: boolean;
-  generateDocs?: boolean;
-  generateAbis?: boolean;
-  installDir?: string;
-  forceRecompilation?: boolean;
-  fetchDepsOnly?: boolean;
-  skipFetchLatestGitDeps?: boolean;
-  bytecodeVersion?: number;
+  /**
+   *
+   * Execute move compiler to unittest
+   *
+   * @param options move package test options
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public async test(options?: TestOptions): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+
+    const buildRawArgs = this.makeRawBuildConfig();
+
+    buildRawArgs.package_path.is_nil = false;
+    buildRawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8');
+    buildRawArgs.package_path.len = Buffer.from(
+      this.packagePath,
+      'utf-8'
+    ).length;
+
+    const testArgs = ref.alloc(InitiaCompilerTestOptionType);
+    const testRawArgs = testArgs.deref();
+
+    testRawArgs.gas_limit = options?.gasLimit || 1_000_000;
+    testRawArgs.list = options?.list || false;
+    testRawArgs.num_threads = options?.numThreads || 1;
+    testRawArgs.report_statistics = options?.reportStatistics || false;
+    testRawArgs.report_storage_on_error =
+      options?.reportStorageOnError || false;
+    testRawArgs.ignore_compile_warnings =
+      options?.ignoreCompileWarnings || false;
+    testRawArgs.check_stackless_vm = options?.checkStacklessVm || false;
+    testRawArgs.verbose_mode = options?.verboseMode || false;
+    testRawArgs.compute_coverage = options?.computeCoverage || false;
+
+    return handleResponse(
+      libinitiavm.test_move_package.async,
+      errMsg,
+      'utf-8',
+      buildRawArgs,
+      testRawArgs
+    );
+  }
+
+  /**
+   *
+   * Decode module bytes to move module
+   *
+   * @param moduleBytes move module bytes
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public static async decode_module_bytes(
+    moduleBytes: Buffer
+  ): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+
+    const moduleBytesView = ref.alloc(ByteSliceViewType);
+    const rawModuleBytesView = moduleBytesView.deref();
+    rawModuleBytesView.is_nil = false;
+    rawModuleBytesView.ptr = ref.allocCString(
+      moduleBytes.toString('base64'),
+      'base64'
+    );
+    rawModuleBytesView.len = moduleBytes.length;
+
+    return handleResponse(
+      libinitiavm.decode_module_bytes.async,
+      errMsg,
+      'utf-8',
+      rawModuleBytesView
+    );
+  }
+
+  /**
+   *
+   * Decode script bytes to move function
+   *
+   * @param scriptBytes move script bytes
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public static async decode_script_bytes(
+    scriptBytes: Buffer
+  ): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+
+    const scriptBytesView = ref.alloc(ByteSliceViewType);
+    const rawScriptBytesView = scriptBytesView.deref();
+    rawScriptBytesView.is_nil = false;
+    rawScriptBytesView.ptr = ref.allocCString(
+      scriptBytes.toString('base64'),
+      'base64'
+    );
+    rawScriptBytesView.len = scriptBytes.length;
+
+    return handleResponse(
+      libinitiavm.decode_script_bytes.async,
+      errMsg,
+      'utf-8',
+      rawScriptBytesView
+    );
+  }
+
+  /**
+   *
+   * Read module info from bytes
+   *
+   * @param compiledBinary move compiled bytes
+   *
+   * @returns if success return "ok", else throw an error
+   */
+  public static async read_module_info(
+    compiledBinary: Buffer
+  ): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+
+    const compiledView = ref.alloc(ByteSliceViewType);
+    const rawCompiledView = compiledView.deref();
+    rawCompiledView.is_nil = false;
+    rawCompiledView.ptr = ref.allocCString(
+      compiledBinary.toString('base64'),
+      'base64'
+    );
+    rawCompiledView.len = compiledBinary.length;
+
+    return handleResponse(
+      libinitiavm.read_module_info.async,
+      errMsg,
+      'utf-8',
+      rawCompiledView
+    );
+  }
 }
