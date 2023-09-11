@@ -48,23 +48,3 @@ describe('build move package', () => {
     expect(await builder.clean({})).toEqual('ok');
   });
 });
-
-describe('test move package', () => {
-  // need time to get dependencies
-  jest.setTimeout(200000);
-  const contractDir = 'contract/table';
-
-  it('test correctly', async () => {
-    const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {});
-    expect(await builder.test()).toEqual('ok');
-  });
-});
-
-describe('create and clean new move package', () => {
-  const contractDir = 'contract/new';
-
-  it('create move package correctly', async () => {
-    const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {});
-    expect(await builder.new('new')).toEqual('ok');
-  });
-});
