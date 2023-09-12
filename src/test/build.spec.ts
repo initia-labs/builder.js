@@ -3,6 +3,7 @@ import { MoveBuilder } from '../build';
 import path from 'path';
 
 describe('build move package', () => {
+  jest.setTimeout(20000);
   const contractDir = 'contract/dummy';
   const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {});
 

@@ -1,9 +1,9 @@
 [package]
-name = "table"
+name = "tt"
 version = "0.0.0"
 
 [dependencies]
-InitiaStdlib = { git = "https://github.com/initia-labs/initiavm.git", subdir = "precompile/modules/initia_stdlib", rev = "8a5ec500275ec3c636a7c29a5c2d3509b26261e8" }
+InitiaStdlib = { git = "https://github.com/initia-labs/initiavm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
 std =  "0x1"
