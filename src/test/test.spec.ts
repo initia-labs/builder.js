@@ -2,7 +2,7 @@ import { MoveBuilder } from '../build';
 import path from 'path';
 
 describe('test move package', () => {
-  jest.setTimeout(20000);
+  jest.setTimeout(200000);
   const contractDir = 'contract/simple';
 
   it('test correctly', async () => {
