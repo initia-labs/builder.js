@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "InitiaLabs",
@@ -21,8 +21,8 @@
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
-    "libinitia.dylib",
-    "libinitia.*.so"
+    "libcompiler.dylib",
+    "libcompiler.*.so"
   ],
   "engines": {
     "node": ">=14"

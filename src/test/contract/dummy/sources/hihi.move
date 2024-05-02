@@ -3,7 +3,7 @@ module 0x999::hihi {
         0
     }
 
-    entry fun return_10(): u32 {
+    public fun return_10(): u32 {
         10
     }
 }
