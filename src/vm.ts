@@ -29,7 +29,7 @@ if (process.platform == 'darwin') {
 }
 
 export const libcompiler = ffi.Library(
-  path.resolve(__dirname, `../${compilerName}`),
+  path.resolve(__dirname, `../library/${compilerName}`),
   {
     create_new_move_package: [
       UnmanagedVectorType,

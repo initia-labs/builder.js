@@ -9,8 +9,6 @@ import {
   InitiaCompilerTestOptionType,
   FFIResult,
   CleanOptions,
-  ProveOptions,
-  InitiaCompilerProveOptionType,
 } from './types';
 import { libcompiler, libmovevm } from './vm';
 import { handleResponse, createRawErrMsg } from './utils';

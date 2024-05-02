@@ -1,13 +1,7 @@
 import * as ref from 'ref-napi';
 import struct = require('ref-struct-di');
 
-import {
-  UnmanagedVectorType,
-  ByteSliceViewType,
-  FFIResultFromat,
-  FFIResult,
-} from './types';
-import { libcompiler } from './vm';
+import { UnmanagedVectorType, FFIResultFromat, FFIResult } from './types';
 
 export async function handleResponse(
   method: Function,
@@ -66,25 +60,3 @@ export function createRawErrMsg() {
 
   return errMsg;
 }
-
-// export async function read_module_info(
-//   compiledBinary: Buffer
-// ): Promise<FFIResult> {
-//   const errMsg = createRawErrMsg();
-
-//   const compiledView = ref.alloc(ByteSliceViewType);
-//   const rawCompiledView = compiledView.deref();
-//   rawCompiledView.is_nil = false;
-//   rawCompiledView.ptr = ref.allocCString(
-//     compiledBinary.toString('base64'),
-//     'base64'
-//   );
-//   rawCompiledView.len = compiledBinary.length;
-
-//   return handleResponse(
-//     libcompiler.read_module_info.async,
-//     errMsg,
-//     'utf-8',
-//     rawCompiledView
-//   );
-// }
