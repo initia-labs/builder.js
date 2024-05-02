@@ -12,12 +12,16 @@ import {
   ProveOptions,
   InitiaCompilerProveOptionType,
 } from './types';
-import { libinitiavm } from './vm';
+import { libcompiler, libmovevm } from './vm';
 import { handleResponse, createRawErrMsg } from './utils';
 
 export class MoveBuilder {
   private packagePath: string;
   private buildOptions: BuildOptions;
+
+  /////////////////////////////
+  // compiler
+  /////////////////////////////
 
   /**
    *
@@ -86,7 +90,7 @@ export class MoveBuilder {
     rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length;
 
     return handleResponse(
-      libinitiavm.create_new_move_package.async,
+      libcompiler.create_new_move_package.async,
       errMsg,
       'utf-8',
       rawArgs,
@@ -105,7 +109,7 @@ export class MoveBuilder {
     const rawArgs = this.makeRawBuildConfig();
 
     return handleResponse(
-      libinitiavm.clean_move_package.async,
+      libcompiler.clean_move_package.async,
       errMsg,
       'utf-8',
       rawArgs,
@@ -126,7 +130,7 @@ export class MoveBuilder {
     const rawArgs = this.makeRawBuildConfig();
 
     return handleResponse(
-      libinitiavm.build_move_package.async,
+      libcompiler.build_move_package.async,
       errMsg,
       'utf-8',
       rawArgs
@@ -169,43 +173,6 @@ export class MoveBuilder {
 
   /**
    *
-   * @param precompiledBinary precompiled module bytes code
-   * @param moduleName the module name to change
-   *
-   * @returns name converted module bytes
-   */
-  public static async convert_module_name(
-    precompiledBinary: Buffer,
-    moduleName: string
-  ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
-
-    const precompiledView = ref.alloc(ByteSliceViewType);
-    const rawPrecompiledView = precompiledView.deref();
-    rawPrecompiledView.is_nil = false;
-    rawPrecompiledView.ptr = ref.allocCString(
-      precompiledBinary.toString('base64'),
-      'base64'
-    );
-    rawPrecompiledView.len = precompiledBinary.length;
-
-    const moduleNameView = ref.alloc(ByteSliceViewType);
-    const rawModuleNameView = moduleNameView.deref();
-    rawModuleNameView.is_nil = false;
-    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8');
-    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length;
-
-    return handleResponse(
-      libinitiavm.convert_module_name.async,
-      errMsg,
-      'buffer',
-      rawPrecompiledView,
-      rawModuleNameView
-    );
-  }
-
-  /**
-   *
    * Execute move compiler to unittest
    *
    * @param options move package test options
@@ -240,11 +207,52 @@ export class MoveBuilder {
     testRawArgs.compute_coverage = options?.computeCoverage || false;
 
     return handleResponse(
-      libinitiavm.test_move_package.async,
+      libcompiler.test_move_package.async,
       errMsg,
       'utf-8',
       buildRawArgs,
       testRawArgs
+    );
+  }
+
+  /////////////////////////////
+  // movevm
+  /////////////////////////////
+
+  /**
+   *
+   * @param precompiledBinary precompiled module bytes code
+   * @param moduleName the module name to change
+   *
+   * @returns name converted module bytes
+   */
+  public static async convert_module_name(
+    precompiledBinary: Buffer,
+    moduleName: string
+  ): Promise<FFIResult> {
+    const errMsg = createRawErrMsg();
+
+    const precompiledView = ref.alloc(ByteSliceViewType);
+    const rawPrecompiledView = precompiledView.deref();
+    rawPrecompiledView.is_nil = false;
+    rawPrecompiledView.ptr = ref.allocCString(
+      precompiledBinary.toString('base64'),
+      'base64'
+    );
+    rawPrecompiledView.len = precompiledBinary.length;
+
+    const moduleNameView = ref.alloc(ByteSliceViewType);
+    const rawModuleNameView = moduleNameView.deref();
+    rawModuleNameView.is_nil = false;
+    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8');
+    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length;
+
+    return handleResponse(
+      libmovevm.convert_module_name.async,
+      errMsg,
+      'buffer',
+      rawPrecompiledView,
+      rawModuleNameView
     );
   }
 
@@ -271,7 +279,7 @@ export class MoveBuilder {
     rawModuleBytesView.len = moduleBytes.length;
 
     return handleResponse(
-      libinitiavm.decode_module_bytes.async,
+      libmovevm.decode_module_bytes.async,
       errMsg,
       'utf-8',
       rawModuleBytesView
@@ -301,7 +309,7 @@ export class MoveBuilder {
     rawScriptBytesView.len = scriptBytes.length;
 
     return handleResponse(
-      libinitiavm.decode_script_bytes.async,
+      libmovevm.decode_script_bytes.async,
       errMsg,
       'utf-8',
       rawScriptBytesView
@@ -331,7 +339,7 @@ export class MoveBuilder {
     rawCompiledView.len = compiledBinary.length;
 
     return handleResponse(
-      libinitiavm.read_module_info.async,
+      libmovevm.read_module_info.async,
       errMsg,
       'utf-8',
       rawCompiledView

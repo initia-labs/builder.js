@@ -13,21 +13,24 @@ import {
 ///////////////////////
 // Function Definitions
 
-let libraryName: string;
+let compilerName: string;
+let movevmName: string;
 if (process.platform == 'darwin') {
-  libraryName = 'libinitia.dylib';
+  compilerName = 'libcompiler.dylib';
+  movevmName = 'libmovevm.dylib';
 } else if (process.platform == 'linux' && process.arch == 'arm64') {
-  libraryName = 'libinitia.aarch64.so';
+  compilerName = 'libcompiler.aarch64.so';
+  movevmName = 'libmovevm.aarch64.so';
 } else if (process.platform == 'linux' && process.arch == 'x64') {
-  libraryName = 'libinitia.x86_64.so';
+  compilerName = 'libcompiler.x86_64.so';
+  movevmName = 'libmovevm.x86_64.so';
 } else {
   throw new Error(`${process.platform}/${process.arch} not supported`);
 }
 
-export const libinitiavm = ffi.Library(
-  path.resolve(__dirname, `../${libraryName}`),
+export const libcompiler = ffi.Library(
+  path.resolve(__dirname, `../${compilerName}`),
   {
-    // move
     create_new_move_package: [
       UnmanagedVectorType,
       [UnmanagedVectorPtr, InitiaCompilerArgumentType, ByteSliceViewType],
@@ -54,10 +57,6 @@ export const libinitiavm = ffi.Library(
       UnmanagedVectorType,
       [UnmanagedVectorPtr, InitiaCompilerArgumentType],
     ],
-    convert_module_name: [
-      UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
-    ],
     test_move_package: [
       UnmanagedVectorType,
       [
@@ -66,8 +65,16 @@ export const libinitiavm = ffi.Library(
         InitiaCompilerTestOptionType,
       ],
     ],
+  }
+);
 
-    // utils
+export const libmovevm = ffi.Library(
+  path.resolve(__dirname, `../${movevmName}`),
+  {
+    convert_module_name: [
+      UnmanagedVectorType,
+      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
+    ],
     read_module_info: [
       UnmanagedVectorType,
       [UnmanagedVectorPtr, ByteSliceViewType],

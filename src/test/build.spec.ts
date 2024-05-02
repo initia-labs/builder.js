@@ -22,7 +22,7 @@ describe('build move package', () => {
   it('decode module bytes', async () => {
     const binary = await builder.get('dummy');
     expect(await MoveBuilder.decode_module_bytes(binary)).toEqual(
-      '{"address":"0x999","name":"dummy","friends":[],"exposed_functions":[{"name":"return_0","visibility":"public","is_entry":false,"is_view":false,"generic_type_params":[],"params":[],"return":["u32"]},{"name":"return_10","visibility":"private","is_entry":true,"is_view":false,"generic_type_params":[],"params":[],"return":["u32"]}],"structs":[]}'
+      '{"address":"0x999","name":"dummy","friends":[],"exposed_functions":[{"name":"return_0","visibility":"public","is_entry":false,"is_view":false,"generic_type_params":[],"params":[],"return":["u32"]},{"name":"return_10","visibility":"public","is_entry":false,"is_view":false,"generic_type_params":[],"params":[],"return":["u32"]}],"structs":[]}'
     );
   });
 
