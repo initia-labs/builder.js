@@ -18,17 +18,25 @@ import { MoveBuilder } from '@initia/builder.js';
 async function buildExample() {
     // recommend to use full package path, not relative path
     // ex) path.resolve(__dirname, "../relative_path")
-    const builder = new MoveBuilder(/* path to move package */, {});
+    const builder = new MoveBuilder(
+        path.resolve(__dirname, 'moon_coin'), // move package path 
+        {} // build options
+    );
 
     // execute move compiler via ffi
     await builder.build();
     
     // load compiled module bytes as `Buffer`
-    const compiledModuleBytes = await builder.get(/* module name */);
+    const compiledModuleBytes = await builder.get(
+        'moon_coin' // module name
+    );
     console.info(compiledModuleBytes.toString('hex'));
 
     // change module name to what you want
-    const nameConvertedModuleBytes = await MoveBuilder.convert_module_name(compiledModuleBytes, /* new module name */);
+    const nameConvertedModuleBytes = await MoveBuilder.convert_module_name(
+        compiledModuleBytes,  // compiled module bytes
+        'sun_coin' // new module name 
+    );
     console.info(nameConvertedModuleBytes.toString('hex'));
 }
 
@@ -40,12 +48,10 @@ async function buildExample() {
 import { MoveBuilder } from '@initia/builder.js';
 
 async function createAndCleanExample() {
-    // recommend to use full package path, not relative path
-    // ex) path.resolve(__dirname, "../relative_path")
-    const builder = new MoveBuilder(/* path to move package */, {});
-
+    const builder = new MoveBuilder(path.resolve(__dirname, 'moon_coin'), {});
+    
     // create new move package
-    await builder.new(/* package name */);
+    await builder.new('new'/* package name */);
     
     await builder.build();
     
@@ -60,9 +66,9 @@ async function createAndCleanExample() {
 import { MoveBuilder } from '@initia/builder.js';
 
 async function readExample() {
-    const builder = new MoveBuilder(/* path to move package */, {});
+    const builder = new MoveBuilder(path.resolve(__dirname, 'moon_coin'), {});
 
-    const binary = await builder.get(/* module name */);
+    const binary = await builder.get('moon_coin');
 
     // read module bytes
     const moduleInfo = await MoveBuilder.read_module_info(binary)
