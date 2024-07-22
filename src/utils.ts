@@ -1,4 +1,4 @@
-import * as ref from 'ref-napi';
+import  ref from 'ref-napi';
 import struct = require('ref-struct-di');
 
 import { UnmanagedVectorType, FFIResultFromat, FFIResult } from './types';

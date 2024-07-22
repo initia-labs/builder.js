@@ -1,5 +1,5 @@
-import * as ref from 'ref-napi';
-import * as ffi from 'ffi-napi';
+import  ref from 'ref-napi';
+import  ffi from 'ffi-napi';
 import path = require('path');
 import {
   UnmanagedVectorType,

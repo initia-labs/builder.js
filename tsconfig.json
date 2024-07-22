@@ -1,31 +1,25 @@
 {
-  "include": ["src", "types"],
-  "exclude": ["/node_modules/", "./src/**/*.spec.ts"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "alwaysStrict": true,
-    "baseUrl": "./",
-    "declaration": true,
+    "target": "es2022",
+    "module": "NodeNext",
     "esModuleInterop": true,
-    "lib": ["es2015", "es2016", "es2017", "dom"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "sourceMap": true,
-    "strict": true,
-    "strictFunctionTypes": true,
+    "allowJs": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "target": "es5",
+    "sourceMap": true,
+    "baseUrl": "src",
+    "sourceRoot": "src",
+    "outDir": "dist",
+    "typeRoots": ["src/types", "node_modules/@types"],
     "paths": {
-      "*": ["src/*"]
+      "graphql": ["node_modules/graphql"],
+      "*": ["*"]
     }
-  }
+  },
+  "include": ["src/**/*.ts", "**/*.mjs"],
+  "exclude": ["node_modules", "dist"]
 }

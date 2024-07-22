@@ -1,4 +1,4 @@
-import * as ref from 'ref-napi';
+import  ref from 'ref-napi';
 import path = require('path');
 import { readFile } from 'fs/promises';
 import {

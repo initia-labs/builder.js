@@ -1,5 +1,5 @@
-import * as ref from 'ref-napi';
-import struct = require('ref-struct-di');
+import ref from 'ref-napi';
+import struct from 'ref-struct-di';
 
 const StructType = struct(ref);
 export type FFIResult = string | Buffer | null;
