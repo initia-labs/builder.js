@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x] 
+        node-version: [18.x] 
     env: 
       # for private repo access
       GITHUB_ACCESS_TOKEN: ${{ secrets.GH_READ_TOKEN }}
