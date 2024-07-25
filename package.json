@@ -24,7 +24,7 @@
     "library"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "scripts": {
     "lint": "npx eslint . --fix",
