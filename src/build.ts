@@ -1,6 +1,6 @@
-import  ref from 'ref-napi';
-import path = require('path');
-import { readFile } from 'fs/promises';
+import ref from 'ref-napi'
+import path = require('path')
+import { readFile } from 'fs/promises'
 import {
   InitiaCompilerArgumentType,
   ByteSliceViewType,
@@ -9,13 +9,13 @@ import {
   InitiaCompilerTestOptionType,
   FFIResult,
   CleanOptions,
-} from './types';
-import { libcompiler, libmovevm } from './vm';
-import { handleResponse, createRawErrMsg } from './utils';
+} from './types'
+import { libcompiler, libmovevm } from './vm'
+import { handleResponse, createRawErrMsg } from './utils'
 
 export class MoveBuilder {
-  private packagePath: string;
-  private buildOptions: BuildOptions;
+  private packagePath: string
+  private buildOptions: BuildOptions
 
   /////////////////////////////
   // compiler
@@ -27,48 +27,46 @@ export class MoveBuilder {
    * @param buildOptions move package build options
    */
   constructor(packagePath: string, buildOptions: BuildOptions) {
-    this.packagePath = packagePath;
-    this.buildOptions = buildOptions;
+    this.packagePath = packagePath
+    this.buildOptions = buildOptions
   }
 
   makeRawBuildConfig() {
     // make compiler args
-    const compilerArgs = ref.alloc(InitiaCompilerArgumentType);
-    const rawArgs = compilerArgs.deref();
+    const compilerArgs = ref.alloc(InitiaCompilerArgumentType)
+    const rawArgs = compilerArgs.deref()
 
     // set package path
-    rawArgs.package_path.is_nil = false;
-    rawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8');
-    rawArgs.package_path.len = Buffer.from(this.packagePath, 'utf-8').length;
+    rawArgs.package_path.is_nil = false
+    rawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8')
+    rawArgs.package_path.len = Buffer.from(this.packagePath, 'utf-8').length
 
     // set build config
-    rawArgs.build_config.dev_mode = this.buildOptions.devMode || false;
-    rawArgs.build_config.test_mode = this.buildOptions.testMode || false;
-    rawArgs.build_config.generate_docs =
-      this.buildOptions.generateDocs || false;
-    rawArgs.build_config.generate_abis =
-      this.buildOptions.generateAbis || false;
+    rawArgs.build_config.dev_mode = this.buildOptions.devMode || false
+    rawArgs.build_config.test_mode = this.buildOptions.testMode || false
+    rawArgs.build_config.generate_docs = this.buildOptions.generateDocs || false
+    rawArgs.build_config.generate_abis = this.buildOptions.generateAbis || false
     rawArgs.build_config.force_recompilation =
-      this.buildOptions.forceRecompilation || false;
+      this.buildOptions.forceRecompilation || false
     rawArgs.build_config.fetch_deps_only =
-      this.buildOptions.fetchDepsOnly || false;
+      this.buildOptions.fetchDepsOnly || false
     rawArgs.build_config.skip_fetch_latest_git_deps =
-      this.buildOptions.skipFetchLatestGitDeps || false;
+      this.buildOptions.skipFetchLatestGitDeps || false
     rawArgs.build_config.bytecode_version =
-      this.buildOptions.bytecodeVersion || 6;
+      this.buildOptions.bytecodeVersion || 6
 
     // set install dir
-    rawArgs.build_config.install_dir.is_nil = false;
+    rawArgs.build_config.install_dir.is_nil = false
     rawArgs.build_config.install_dir.ptr = ref.allocCString(
       this.buildOptions.installDir || '',
       'utf-8'
-    );
+    )
     rawArgs.build_config.install_dir.len = Buffer.from(
       this.buildOptions.installDir || '',
       'utf-8'
-    ).length;
+    ).length
 
-    return rawArgs;
+    return rawArgs
   }
 
   /**
@@ -78,14 +76,14 @@ export class MoveBuilder {
    * @returns if success return "ok", else throw an error
    */
   public async new(packageName: string): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
-    const rawArgs = this.makeRawBuildConfig();
+    const errMsg = createRawErrMsg()
+    const rawArgs = this.makeRawBuildConfig()
 
-    const packageNameView = ref.alloc(ByteSliceViewType);
-    const rawPackageNameView = packageNameView.deref();
-    rawPackageNameView.is_nil = false;
-    rawPackageNameView.ptr = ref.allocCString(packageName, 'utf-8');
-    rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length;
+    const packageNameView = ref.alloc(ByteSliceViewType)
+    const rawPackageNameView = packageNameView.deref()
+    rawPackageNameView.is_nil = false
+    rawPackageNameView.ptr = ref.allocCString(packageName, 'utf-8')
+    rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length
 
     return handleResponse(
       libcompiler.create_new_move_package.async,
@@ -93,7 +91,7 @@ export class MoveBuilder {
       'utf-8',
       rawArgs,
       packageNameView
-    );
+    )
   }
 
   /**
@@ -103,8 +101,8 @@ export class MoveBuilder {
    * @returns if success return "ok", else throw an error
    */
   public async clean(options?: CleanOptions): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
-    const rawArgs = this.makeRawBuildConfig();
+    const errMsg = createRawErrMsg()
+    const rawArgs = this.makeRawBuildConfig()
 
     return handleResponse(
       libcompiler.clean_move_package.async,
@@ -114,7 +112,7 @@ export class MoveBuilder {
       options?.cleanCache || false,
       options?.cleanByProduct || false,
       options?.force === undefined ? true : options?.force
-    );
+    )
   }
 
   /**
@@ -124,15 +122,15 @@ export class MoveBuilder {
    * @returns if success return "ok", else throw an error
    */
   public async build(): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
-    const rawArgs = this.makeRawBuildConfig();
+    const errMsg = createRawErrMsg()
+    const rawArgs = this.makeRawBuildConfig()
 
     return handleResponse(
       libcompiler.build_move_package.async,
       errMsg,
       'utf-8',
       rawArgs
-    );
+    )
   }
 
   /**
@@ -143,19 +141,19 @@ export class MoveBuilder {
    * @returns the module bytecode
    */
   public async get(moduleName: string): Promise<Buffer> {
-    const moveTomlPath = path.join(this.packagePath, 'Move.toml');
-    const moveToml = await readFile(moveTomlPath);
+    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
+    const moveToml = await readFile(moveTomlPath)
 
     const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
       moveToml.toString('utf-8')
-    );
+    )
     if (packageNameLine === null || packageNameLine.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml');
+      throw new Error('failed to lookup package name from Move.toml')
     }
 
-    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0]);
+    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
     if (packageName === null || packageName.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml');
+      throw new Error('failed to lookup package name from Move.toml')
     }
 
     const bytecodePath = path.join(
@@ -164,9 +162,9 @@ export class MoveBuilder {
       packageName[0].slice(1, -1),
       'bytecode_modules',
       moduleName + '.mv'
-    );
+    )
 
-    return readFile(bytecodePath);
+    return readFile(bytecodePath)
   }
 
   /**
@@ -178,31 +176,30 @@ export class MoveBuilder {
    * @returns if success return "ok", else throw an error
    */
   public async test(options?: TestOptions): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
+    const errMsg = createRawErrMsg()
 
-    const buildRawArgs = this.makeRawBuildConfig();
+    const buildRawArgs = this.makeRawBuildConfig()
 
-    buildRawArgs.package_path.is_nil = false;
-    buildRawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8');
+    buildRawArgs.package_path.is_nil = false
+    buildRawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8')
     buildRawArgs.package_path.len = Buffer.from(
       this.packagePath,
       'utf-8'
-    ).length;
+    ).length
 
-    const testArgs = ref.alloc(InitiaCompilerTestOptionType);
-    const testRawArgs = testArgs.deref();
+    const testArgs = ref.alloc(InitiaCompilerTestOptionType)
+    const testRawArgs = testArgs.deref()
 
-    testRawArgs.gas_limit = options?.gasLimit || 1_000_000;
-    testRawArgs.list = options?.list || false;
-    testRawArgs.num_threads = options?.numThreads || 1;
-    testRawArgs.report_statistics = options?.reportStatistics || false;
-    testRawArgs.report_storage_on_error =
-      options?.reportStorageOnError || false;
+    testRawArgs.gas_limit = options?.gasLimit || 1_000_000
+    testRawArgs.list = options?.list || false
+    testRawArgs.num_threads = options?.numThreads || 1
+    testRawArgs.report_statistics = options?.reportStatistics || false
+    testRawArgs.report_storage_on_error = options?.reportStorageOnError || false
     testRawArgs.ignore_compile_warnings =
-      options?.ignoreCompileWarnings || false;
-    testRawArgs.check_stackless_vm = options?.checkStacklessVm || false;
-    testRawArgs.verbose_mode = options?.verboseMode || false;
-    testRawArgs.compute_coverage = options?.computeCoverage || false;
+      options?.ignoreCompileWarnings || false
+    testRawArgs.check_stackless_vm = options?.checkStacklessVm || false
+    testRawArgs.verbose_mode = options?.verboseMode || false
+    testRawArgs.compute_coverage = options?.computeCoverage || false
 
     return handleResponse(
       libcompiler.test_move_package.async,
@@ -210,7 +207,7 @@ export class MoveBuilder {
       'utf-8',
       buildRawArgs,
       testRawArgs
-    );
+    )
   }
 
   /////////////////////////////
@@ -228,22 +225,22 @@ export class MoveBuilder {
     precompiledBinary: Buffer,
     moduleName: string
   ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
+    const errMsg = createRawErrMsg()
 
-    const precompiledView = ref.alloc(ByteSliceViewType);
-    const rawPrecompiledView = precompiledView.deref();
-    rawPrecompiledView.is_nil = false;
+    const precompiledView = ref.alloc(ByteSliceViewType)
+    const rawPrecompiledView = precompiledView.deref()
+    rawPrecompiledView.is_nil = false
     rawPrecompiledView.ptr = ref.allocCString(
       precompiledBinary.toString('base64'),
       'base64'
-    );
-    rawPrecompiledView.len = precompiledBinary.length;
+    )
+    rawPrecompiledView.len = precompiledBinary.length
 
-    const moduleNameView = ref.alloc(ByteSliceViewType);
-    const rawModuleNameView = moduleNameView.deref();
-    rawModuleNameView.is_nil = false;
-    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8');
-    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length;
+    const moduleNameView = ref.alloc(ByteSliceViewType)
+    const rawModuleNameView = moduleNameView.deref()
+    rawModuleNameView.is_nil = false
+    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8')
+    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length
 
     return handleResponse(
       libmovevm.convert_module_name.async,
@@ -251,7 +248,7 @@ export class MoveBuilder {
       'buffer',
       rawPrecompiledView,
       rawModuleNameView
-    );
+    )
   }
 
   /**
@@ -265,23 +262,23 @@ export class MoveBuilder {
   public static async decode_module_bytes(
     moduleBytes: Buffer
   ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
+    const errMsg = createRawErrMsg()
 
-    const moduleBytesView = ref.alloc(ByteSliceViewType);
-    const rawModuleBytesView = moduleBytesView.deref();
-    rawModuleBytesView.is_nil = false;
+    const moduleBytesView = ref.alloc(ByteSliceViewType)
+    const rawModuleBytesView = moduleBytesView.deref()
+    rawModuleBytesView.is_nil = false
     rawModuleBytesView.ptr = ref.allocCString(
       moduleBytes.toString('base64'),
       'base64'
-    );
-    rawModuleBytesView.len = moduleBytes.length;
+    )
+    rawModuleBytesView.len = moduleBytes.length
 
     return handleResponse(
       libmovevm.decode_module_bytes.async,
       errMsg,
       'utf-8',
       rawModuleBytesView
-    );
+    )
   }
 
   /**
@@ -295,23 +292,23 @@ export class MoveBuilder {
   public static async decode_script_bytes(
     scriptBytes: Buffer
   ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
+    const errMsg = createRawErrMsg()
 
-    const scriptBytesView = ref.alloc(ByteSliceViewType);
-    const rawScriptBytesView = scriptBytesView.deref();
-    rawScriptBytesView.is_nil = false;
+    const scriptBytesView = ref.alloc(ByteSliceViewType)
+    const rawScriptBytesView = scriptBytesView.deref()
+    rawScriptBytesView.is_nil = false
     rawScriptBytesView.ptr = ref.allocCString(
       scriptBytes.toString('base64'),
       'base64'
-    );
-    rawScriptBytesView.len = scriptBytes.length;
+    )
+    rawScriptBytesView.len = scriptBytes.length
 
     return handleResponse(
       libmovevm.decode_script_bytes.async,
       errMsg,
       'utf-8',
       rawScriptBytesView
-    );
+    )
   }
 
   /**
@@ -325,22 +322,22 @@ export class MoveBuilder {
   public static async read_module_info(
     compiledBinary: Buffer
   ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg();
+    const errMsg = createRawErrMsg()
 
-    const compiledView = ref.alloc(ByteSliceViewType);
-    const rawCompiledView = compiledView.deref();
-    rawCompiledView.is_nil = false;
+    const compiledView = ref.alloc(ByteSliceViewType)
+    const rawCompiledView = compiledView.deref()
+    rawCompiledView.is_nil = false
     rawCompiledView.ptr = ref.allocCString(
       compiledBinary.toString('base64'),
       'base64'
-    );
-    rawCompiledView.len = compiledBinary.length;
+    )
+    rawCompiledView.len = compiledBinary.length
 
     return handleResponse(
       libmovevm.read_module_info.async,
       errMsg,
       'utf-8',
       rawCompiledView
-    );
+    )
   }
 }

@@ -41,3 +41,4 @@ jobs:
       # for private repo access
       - run: git config --global url.https://${GITHUB_ACCESS_TOKEN}:x-oauth-basic@github.com/.insteadOf https://github.com/
       - run: npm run test
+      - run: npm run lint

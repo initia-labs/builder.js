@@ -1,44 +1,44 @@
-import ref from 'ref-napi';
-import struct from 'ref-struct-di';
+import ref from 'ref-napi'
+import struct from 'ref-struct-di'
 
-const StructType = struct(ref);
-export type FFIResult = string | Buffer | null;
-export type FFIResultFromat = 'utf-8' | 'buffer';
+const StructType = struct(ref)
+export type FFIResult = string | Buffer | null
+export type FFIResultFromat = 'utf-8' | 'buffer'
 
 export const UnmanagedVectorType = StructType({
   is_none: ref.types.bool,
   ptr: ref.refType(ref.types.CString),
   len: ref.types.size_t,
   cap: ref.types.size_t,
-});
+})
 
-export const UnmanagedVectorPtr = ref.refType(UnmanagedVectorType);
+export const UnmanagedVectorPtr = ref.refType(UnmanagedVectorType)
 
 export const ByteSliceViewType = StructType({
   is_nil: ref.types.bool,
   ptr: ref.refType(ref.types.CString),
   len: ref.types.size_t,
-});
+})
 
 ///////////////////
 //  prove config //
 ///////////////////
 
 export interface ProveOptions {
-  verbosity?: string;
-  filter?: string;
-  trace?: boolean;
-  cvc5?: boolean;
-  stratificationDepth?: number;
-  randomSeed?: number;
-  procCores?: number;
-  vcTimeout?: number;
-  checkInconsistency?: boolean;
-  keepLoops?: boolean;
-  loopUnroll?: number;
-  stableTestOutput?: boolean;
-  dump?: boolean;
-  forTest?: boolean;
+  verbosity?: string
+  filter?: string
+  trace?: boolean
+  cvc5?: boolean
+  stratificationDepth?: number
+  randomSeed?: number
+  procCores?: number
+  vcTimeout?: number
+  checkInconsistency?: boolean
+  keepLoops?: boolean
+  loopUnroll?: number
+  stableTestOutput?: boolean
+  dump?: boolean
+  forTest?: boolean
 }
 
 export const InitiaCompilerProveOptionType = StructType({
@@ -56,15 +56,15 @@ export const InitiaCompilerProveOptionType = StructType({
   stable_test_output: ref.types.bool,
   dump: ref.types.bool,
   for_test: ref.types.bool,
-});
+})
 ///////////////////
 //  clean config //
 ///////////////////
 
 export interface CleanOptions {
-  cleanCache?: boolean;
-  cleanByProduct?: boolean;
-  force?: boolean;
+  cleanCache?: boolean
+  cleanByProduct?: boolean
+  force?: boolean
 }
 
 ///////////////////
@@ -81,24 +81,24 @@ export const InitiaCompilerBuildConfig = StructType({
   fetch_deps_only: ref.types.bool,
   skip_fetch_latest_git_deps: ref.types.bool,
   bytecode_version: ref.types.uint32,
-});
+})
 
 export const InitiaCompilerArgumentType = StructType({
   package_path: ByteSliceViewType,
   verbose: ref.types.bool,
   build_config: InitiaCompilerBuildConfig,
-});
+})
 
 export interface BuildOptions {
-  devMode?: boolean;
-  testMode?: boolean;
-  generateDocs?: boolean;
-  generateAbis?: boolean;
-  installDir?: string;
-  forceRecompilation?: boolean;
-  fetchDepsOnly?: boolean;
-  skipFetchLatestGitDeps?: boolean;
-  bytecodeVersion?: number;
+  devMode?: boolean
+  testMode?: boolean
+  generateDocs?: boolean
+  generateAbis?: boolean
+  installDir?: string
+  forceRecompilation?: boolean
+  fetchDepsOnly?: boolean
+  skipFetchLatestGitDeps?: boolean
+  bytecodeVersion?: number
 }
 
 ////////////////////
@@ -106,16 +106,16 @@ export interface BuildOptions {
 ////////////////////
 
 export interface TestOptions {
-  gasLimit?: number;
-  filter?: string;
-  list?: boolean;
-  numThreads?: number;
-  reportStatistics?: boolean;
-  reportStorageOnError?: boolean;
-  ignoreCompileWarnings?: boolean;
-  checkStacklessVm?: boolean;
-  verboseMode?: boolean;
-  computeCoverage?: boolean;
+  gasLimit?: number
+  filter?: string
+  list?: boolean
+  numThreads?: number
+  reportStatistics?: boolean
+  reportStorageOnError?: boolean
+  ignoreCompileWarnings?: boolean
+  checkStacklessVm?: boolean
+  verboseMode?: boolean
+  computeCoverage?: boolean
 }
 
 export const InitiaCompilerTestOptionType = StructType({
@@ -129,4 +129,4 @@ export const InitiaCompilerTestOptionType = StructType({
   check_stackless_vm: ref.types.bool,
   verbose_mode: ref.types.bool,
   compute_coverage: ref.types.bool,
-});
+})

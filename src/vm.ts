@@ -1,6 +1,6 @@
-import  ref from 'ref-napi';
-import  ffi from 'ffi-napi';
-import path = require('path');
+import ref from 'ref-napi'
+import ffi from 'ffi-napi'
+import path = require('path')
 import {
   UnmanagedVectorType,
   UnmanagedVectorPtr,
@@ -8,24 +8,24 @@ import {
   ByteSliceViewType,
   InitiaCompilerTestOptionType,
   InitiaCompilerProveOptionType,
-} from './types';
+} from './types'
 
 ///////////////////////
 // Function Definitions
 
-let compilerName: string;
-let movevmName: string;
+let compilerName: string
+let movevmName: string
 if (process.platform == 'darwin') {
-  compilerName = 'libcompiler.dylib';
-  movevmName = 'libmovevm.dylib';
+  compilerName = 'libcompiler.dylib'
+  movevmName = 'libmovevm.dylib'
 } else if (process.platform == 'linux' && process.arch == 'arm64') {
-  compilerName = 'libcompiler.aarch64.so';
-  movevmName = 'libmovevm.aarch64.so';
+  compilerName = 'libcompiler.aarch64.so'
+  movevmName = 'libmovevm.aarch64.so'
 } else if (process.platform == 'linux' && process.arch == 'x64') {
-  compilerName = 'libcompiler.x86_64.so';
-  movevmName = 'libmovevm.x86_64.so';
+  compilerName = 'libcompiler.x86_64.so'
+  movevmName = 'libmovevm.x86_64.so'
 } else {
-  throw new Error(`${process.platform}/${process.arch} not supported`);
+  throw new Error(`${process.platform}/${process.arch} not supported`)
 }
 
 export const libcompiler = ffi.Library(
@@ -66,7 +66,7 @@ export const libcompiler = ffi.Library(
       ],
     ],
   }
-);
+)
 
 export const libmovevm = ffi.Library(
   path.resolve(__dirname, `../library/${movevmName}`),
@@ -96,4 +96,4 @@ export const libmovevm = ffi.Library(
       [UnmanagedVectorPtr, ByteSliceViewType],
     ],
   }
-);
+)
