@@ -17,6 +17,7 @@
     "typeRoots": ["src/types", "node_modules/@types"],
     "paths": {
       "graphql": ["node_modules/graphql"],
+      "@src/*": ["src/*"],
       "*": ["*"]
     }
   },

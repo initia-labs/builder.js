@@ -32,6 +32,6 @@ export default tseslint.config(
   },
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/**/*', '**/*.config.mjs'],
+    ignores: ['dist/**/*', '**/*.config.mjs', '**/*.config.js'],
   },
 )
