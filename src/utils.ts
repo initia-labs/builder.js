@@ -14,6 +14,7 @@ export async function handleResponse(
     }>
   >,
   format: FFIResultFromat,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
 ): Promise<FFIResult> {
   return new Promise((resolve, reject) => {
@@ -21,6 +22,7 @@ export async function handleResponse(
       errMsg,
       ...args,
       (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         _err: any,
         res: struct.StructObject<{
           is_none: boolean
