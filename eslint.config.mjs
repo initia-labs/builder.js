@@ -13,10 +13,6 @@ export default tseslint.config(
         project: './tsconfig.json',
         tsconfigRootDir: import.meta.dirname,
       },
-    },
-    rules: {
-      '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-misused-promises': 'off',
     }
   },
   {
@@ -25,6 +21,6 @@ export default tseslint.config(
   },
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/**/*', '**/*.config.mjs'],
+    ignores: ['dist/**/*', '**/*.config.mjs', '**/*.config.js'],
   },
 )
