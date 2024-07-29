@@ -1,10 +1,23 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument */
 import ref from 'ref-napi'
 import struct = require('ref-struct-di')
 
 import { UnmanagedVectorType, FFIResultFromat, FFIResult } from './types'
 
+type MethodType = (
+  errMsg: ref.Pointer<
+    struct.StructObject<{
+      is_none: boolean
+      ptr: ref.Pointer<string | null>
+      len: string | number
+      cap: string | number
+    }>
+  >,
+  ...args: any[]
+) => void
+
 export async function handleResponse(
-  method: Function,
+  method: MethodType,
   errMsg: ref.Pointer<
     struct.StructObject<{
       is_none: boolean
@@ -14,7 +27,6 @@ export async function handleResponse(
     }>
   >,
   format: FFIResultFromat,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
 ): Promise<FFIResult> {
   return new Promise((resolve, reject) => {
@@ -22,7 +34,6 @@ export async function handleResponse(
       errMsg,
       ...args,
       (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         _err: any,
         res: struct.StructObject<{
           is_none: boolean

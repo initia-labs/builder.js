@@ -31,7 +31,7 @@ export class MoveBuilder {
     this.buildOptions = buildOptions
   }
 
-  makeRawBuildConfig() {
+  makeRawBuildConfig = () => {
     // make compiler args
     const compilerArgs = ref.alloc(InitiaCompilerArgumentType)
     const rawArgs = compilerArgs.deref()
@@ -75,7 +75,7 @@ export class MoveBuilder {
    *
    * @returns if success return "ok", else throw an error
    */
-  public async new(packageName: string): Promise<FFIResult> {
+  public new(packageName: string): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
     const rawArgs = this.makeRawBuildConfig()
 
