@@ -2,7 +2,7 @@
 import ref from 'ref-napi'
 import struct = require('ref-struct-di')
 
-import { UnmanagedVectorType, FFIResultFromat, FFIResult } from './types'
+import { UnmanagedVectorType, FFIResultFormat, FFIResult } from './types'
 
 type MethodType = (
   errMsg: ref.Pointer<
@@ -26,7 +26,7 @@ export async function handleResponse(
       cap: string | number
     }>
   >,
-  format: FFIResultFromat,
+  format: FFIResultFormat,
   ...args: any[]
 ): Promise<FFIResult> {
   return new Promise((resolve, reject) => {
