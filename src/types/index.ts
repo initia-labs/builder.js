@@ -3,7 +3,7 @@ import struct from 'ref-struct-di'
 
 const StructType = struct(ref)
 export type FFIResult = string | Buffer | null
-export type FFIResultFromat = 'utf-8' | 'buffer'
+export type FFIResultFormat = 'utf-8' | 'buffer'
 
 export const UnmanagedVectorType = StructType({
   is_none: ref.types.bool,
