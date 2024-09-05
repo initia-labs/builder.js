@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2022",
     "module": "NodeNext",
+    "declaration": true, // for npm link.
     "esModuleInterop": true,
     "allowJs": false,
     "emitDecoratorMetadata": true,
