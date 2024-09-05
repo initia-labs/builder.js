@@ -57,6 +57,7 @@ export const InitiaCompilerProveOptionType = StructType({
   dump: ref.types.bool,
   for_test: ref.types.bool,
 })
+
 ///////////////////
 //  clean config //
 ///////////////////
