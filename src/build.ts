@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import ref from 'ref-napi'
+import ref from '@eleccookie/ref-napi'
 import path = require('path')
 import { readFile } from 'fs/promises'
 import {

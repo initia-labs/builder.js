@@ -1,4 +1,4 @@
-import ref from 'ref-napi'
+import ref from '@eleccookie/ref-napi'
 import struct from 'ref-struct-di'
 
 const StructType = struct(ref)
