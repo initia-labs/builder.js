@@ -46,7 +46,6 @@ export async function handleResponse(
         reject(new Error('Unknown error occurred'))
       } else {
         try {
-          console.log(res)
           // Process the result based on the format.
           const result =
             format === 'utf-8' ? res.ptr.toString('utf-8') : res.ptr
