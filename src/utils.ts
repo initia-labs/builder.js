@@ -3,6 +3,7 @@ import ref from '@eleccookie/ref-napi'
 import struct from 'ref-struct-di'
 
 import { UnmanagedVectorType, FFIResultFormat, FFIResult } from './types'
+import { Buffer } from 'buffer'
 
 // Define the structure for ErrMsg and Result
 type ErrMsgStruct = struct.StructObject<{
@@ -39,16 +40,21 @@ export async function handleResponse(
 
       if (!resErrMsg.is_none) {
         // If the error message is not "none", reject the promise with the error.
-        const errorMessage = resErrMsg.ptr.toString('utf-8')
+        const errorMessage = resErrMsg.ptr.reinterpret(resErrMsg.len).toString()
         reject(new Error(errorMessage))
       } else if (res.is_none) {
         // Handle case where result is "none".
         reject(new Error('Unknown error occurred'))
       } else {
         try {
-          // Process the result based on the format.
+          const buffer = Buffer.from(res.ptr.reinterpret(res.len).toString())
+          // console.log(Buffer.isBuffer(buffer))
+          // console.log(buffer.slice(0, res.len))
+          // console.log(buffer.slice(0, res.len).toString('utf-8'))
           const result =
-            format === 'utf-8' ? res.ptr.toString('utf-8') : res.ptr
+            format === 'utf-8'
+              ? buffer.slice(0, res.len).toString('utf-8')
+              : buffer.slice(0, res.len)
           resolve(result)
         } catch (e) {
           // Catch any error that occurs during processing and reject the promise.
