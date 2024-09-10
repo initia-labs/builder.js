@@ -48,9 +48,6 @@ export async function handleResponse(
       } else {
         try {
           const buffer = Buffer.from(res.ptr.reinterpret(res.len).toString())
-          // console.log(Buffer.isBuffer(buffer))
-          // console.log(buffer.slice(0, res.len))
-          // console.log(buffer.slice(0, res.len).toString('utf-8'))
           const result =
             format === 'utf-8'
               ? buffer.slice(0, res.len).toString('utf-8')
