@@ -40,18 +40,17 @@ export async function handleResponse(
 
       if (!resErrMsg.is_none) {
         // If the error message is not "none", reject the promise with the error.
-        const errorMessage = resErrMsg.ptr.reinterpret(resErrMsg.len).toString()
+        const errorMessage = resErrMsg.ptr.reinterpret(resErrMsg.len).toString('utf-8')
         reject(new Error(errorMessage))
       } else if (res.is_none) {
         // Handle case where result is "none".
         reject(new Error('Unknown error occurred'))
       } else {
         try {
-          const buffer = Buffer.from(res.ptr.reinterpret(res.len).toString())
-          const result =
-            format === 'utf-8'
-              ? buffer.slice(0, res.len).toString('utf-8')
-              : buffer.slice(0, res.len)
+          const buffer = Buffer.from(
+            res.ptr.reinterpret(res.len).toString('utf-8')
+          )
+          const result = buffer.subarray(0, res.cap).toString('utf-8')
           resolve(result)
         } catch (e) {
           // Catch any error that occurs during processing and reject the promise.
