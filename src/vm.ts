@@ -1,5 +1,5 @@
-import ref from 'ref-napi'
-import ffi from 'ffi-napi'
+import ref from '@eleccookie/ref-napi'
+import ffi from '@eleccookie/ffi-napi'
 import path = require('path')
 import {
   UnmanagedVectorType,

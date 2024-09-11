@@ -40,7 +40,8 @@ describe('build move package', () => {
         path.resolve(
           __dirname,
           `${contractDir}/build/DummyContract/bytecode_modules/hihi.mv`
-        )
+        ),
+        'utf-8'
       )
     )
   })
