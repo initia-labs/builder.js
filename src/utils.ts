@@ -40,7 +40,9 @@ export async function handleResponse(
 
       if (!resErrMsg.is_none) {
         // If the error message is not "none", reject the promise with the error.
-        const errorMessage = resErrMsg.ptr.reinterpret(resErrMsg.len).toString('utf-8')
+        const errorMessage = resErrMsg.ptr
+          .reinterpret(resErrMsg.len)
+          .toString('utf-8')
         reject(new Error(errorMessage))
       } else if (res.is_none) {
         // Handle case where result is "none".
