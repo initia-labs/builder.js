@@ -258,7 +258,7 @@ export class MoveBuilder {
    *
    * @param moduleBytes move module bytes
    *
-   * @returns if success return "ok", else throw an error
+   * @returns if success return buffer, else throw an error
    */
   public static async decode_module_bytes(
     moduleBytes: Buffer
@@ -288,7 +288,7 @@ export class MoveBuilder {
    *
    * @param scriptBytes move script bytes
    *
-   * @returns if success return "ok", else throw an error
+   * @returns if success return buffer, else throw an error
    */
   public static async decode_script_bytes(
     scriptBytes: Buffer
@@ -318,7 +318,7 @@ export class MoveBuilder {
    *
    * @param compiledBinary move compiled bytes
    *
-   * @returns if success return "ok", else throw an error
+   * @returns if success return buffer, else throw an error
    */
   public static async read_module_info(
     compiledBinary: Buffer
