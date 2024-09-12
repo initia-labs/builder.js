@@ -18,10 +18,6 @@ export class MoveBuilder {
   private readonly packagePath: string
   private buildOptions: BuildOptions
 
-  /////////////////////////////
-  // compiler
-  /////////////////////////////
-
   /**
    *
    * @param packagePath full path to package directory
@@ -210,10 +206,6 @@ export class MoveBuilder {
       testRawArgs
     )
   }
-
-  /////////////////////////////
-  // movevm
-  /////////////////////////////
 
   /**
    *
