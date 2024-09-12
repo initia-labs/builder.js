@@ -15,7 +15,7 @@ import { libcompiler, libmovevm } from './vm'
 import { handleResponse, createRawErrMsg } from './utils'
 
 export class MoveBuilder {
-  private packagePath: string
+  private readonly packagePath: string
   private buildOptions: BuildOptions
 
   /////////////////////////////
