@@ -28,7 +28,6 @@
   },
   "scripts": {
     "lint": "npx eslint . --fix",
-    "prepare": "husky",
     "build": "tsc --module commonjs",
     "test": "jest --passWithNoTests"
   },
