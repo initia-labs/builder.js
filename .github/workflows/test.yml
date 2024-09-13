@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   test:
-    name: Build & Test tsc
+    name: Build & Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
