@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import ref from '@eleccookie/ref-napi'
 import struct from 'ref-struct-di'
 

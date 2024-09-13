@@ -10,9 +10,6 @@ import {
   InitiaCompilerProveOptionType,
 } from './types'
 
-///////////////////////
-// Function Definitions
-
 let compilerName: string
 let movevmName: string
 if (process.platform == 'darwin') {
