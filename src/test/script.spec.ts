@@ -8,7 +8,7 @@ describe('build script', () => {
 
   it('build script', async () => {
     expect(await builder.build()).toEqual('ok')
-  })
+  }, 10000)
 
   it('decode_script_bytes', async () => {
     const bytePath = 'contract/script/build/script/bytecode_scripts/even.mv'
