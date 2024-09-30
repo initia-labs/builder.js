@@ -20,56 +20,11 @@ export const ByteSliceViewType = StructType({
   len: ref.types.size_t,
 })
 
-///////////////////
-//  prove config //
-///////////////////
-
-export interface ProveOptions {
-  verbosity?: string
-  filter?: string
-  trace?: boolean
-  cvc5?: boolean
-  stratificationDepth?: number
-  randomSeed?: number
-  procCores?: number
-  vcTimeout?: number
-  checkInconsistency?: boolean
-  keepLoops?: boolean
-  loopUnroll?: number
-  stableTestOutput?: boolean
-  dump?: boolean
-  forTest?: boolean
-}
-
-export const InitiaCompilerProveOptionType = StructType({
-  verbosity: ByteSliceViewType,
-  filter: ByteSliceViewType,
-  trace: ref.types.bool,
-  cvc5: ref.types.bool,
-  stratification_depth: ref.types.size_t,
-  random_seed: ref.types.size_t,
-  proc_cores: ref.types.size_t,
-  vc_timeout: ref.types.size_t,
-  check_inconsistency: ref.types.bool,
-  keep_loops: ref.types.bool,
-  loop_unroll: ref.types.uint64,
-  stable_test_output: ref.types.bool,
-  dump: ref.types.bool,
-  for_test: ref.types.bool,
-})
-///////////////////
-//  clean config //
-///////////////////
-
 export interface CleanOptions {
   cleanCache?: boolean
   cleanByProduct?: boolean
   force?: boolean
 }
-
-///////////////////
-//  build config //
-///////////////////
 
 export const InitiaCompilerBuildConfig = StructType({
   dev_mode: ref.types.bool,
@@ -100,10 +55,6 @@ export interface BuildOptions {
   skipFetchLatestGitDeps?: boolean
   bytecodeVersion?: number
 }
-
-////////////////////
-//   test config  //
-////////////////////
 
 export interface TestOptions {
   gasLimit?: number

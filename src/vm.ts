@@ -7,7 +7,6 @@ import {
   InitiaCompilerArgumentType,
   ByteSliceViewType,
   InitiaCompilerTestOptionType,
-  InitiaCompilerProveOptionType,
 } from './types'
 
 let compilerName: string
@@ -40,14 +39,6 @@ export const libcompiler = ffi.Library(
         ref.types.bool,
         ref.types.bool,
         ref.types.bool,
-      ],
-    ],
-    prove_move_package: [
-      UnmanagedVectorType,
-      [
-        UnmanagedVectorPtr,
-        InitiaCompilerArgumentType,
-        InitiaCompilerProveOptionType,
       ],
     ],
     build_move_package: [
