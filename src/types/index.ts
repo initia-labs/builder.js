@@ -20,30 +20,19 @@ export const ByteSliceViewType = StructType({
   len: ref.types.size_t,
 })
 
+///////////////////
+//  clean config //
+///////////////////
+
 export interface CleanOptions {
   cleanCache?: boolean
   cleanByProduct?: boolean
   force?: boolean
 }
 
-export const InitiaCompilerBuildConfig = StructType({
-  dev_mode: ref.types.bool,
-  test_mode: ref.types.bool,
-  generate_docs: ref.types.bool,
-  generate_abis: ref.types.bool,
-  install_dir: ByteSliceViewType,
-  force_recompilation: ref.types.bool,
-  fetch_deps_only: ref.types.bool,
-  skip_fetch_latest_git_deps: ref.types.bool,
-  bytecode_version: ref.types.uint32,
-})
-
-export const InitiaCompilerArgumentType = StructType({
-  package_path: ByteSliceViewType,
-  verbose: ref.types.bool,
-  build_config: InitiaCompilerBuildConfig,
-})
-
+///////////////////
+//  build config //
+///////////////////
 export interface BuildOptions {
   devMode?: boolean
   testMode?: boolean
@@ -68,16 +57,3 @@ export interface TestOptions {
   verboseMode?: boolean
   computeCoverage?: boolean
 }
-
-export const InitiaCompilerTestOptionType = StructType({
-  gas_limit: ref.types.uint64,
-  filter: ByteSliceViewType,
-  list: ref.types.bool,
-  num_threads: ref.types.size_t,
-  report_statistics: ref.types.bool,
-  report_storage_on_error: ref.types.bool,
-  ignore_compile_warnings: ref.types.bool,
-  check_stackless_vm: ref.types.bool,
-  verbose_mode: ref.types.bool,
-  compute_coverage: ref.types.bool,
-})

@@ -3,16 +3,15 @@ import ref from '@eleccookie/ref-napi'
 import path = require('path')
 import { readFile } from 'fs/promises'
 import {
-  InitiaCompilerArgumentType,
   ByteSliceViewType,
   BuildOptions,
   TestOptions,
-  InitiaCompilerTestOptionType,
   FFIResult,
   CleanOptions,
 } from './types'
 import { libcompiler, libmovevm } from './vm'
 import { handleResponse, createRawErrMsg } from './utils'
+import { bcs } from '@initia/initia.js'
 
 export class MoveBuilder {
   private readonly packagePath: string
@@ -29,41 +28,59 @@ export class MoveBuilder {
   }
 
   makeRawBuildConfig = () => {
-    // make compiler args
-    const compilerArgs = ref.alloc(InitiaCompilerArgumentType)
-    const rawArgs = compilerArgs.deref()
+    const compilierPayloadBcsType = bcs.struct('CompilerArguments', {
+      package_path: bcs.option(bcs.string()),
+      verbose: bcs.bool(),
+      build_config: bcs.struct('BuildConfig', {
+        dev_mode: bcs.bool(),
+        test_mode: bcs.bool(),
+        generate_docs: bcs.bool(),
+        generate_abis: bcs.bool(),
+        install_dir: bcs.option(bcs.string()),
+        force_recompilation: bcs.bool(),
+        fetch_deps_only: bcs.bool(),
+        skip_fetch_latest_git_deps: bcs.bool(),
+        bytecode_version: bcs.u32(),
+        compiler_version: bcs.string(),
+        language_version: bcs.string(),
+        additional_named_addresses: bcs.vector(
+          bcs.tuple([bcs.string(), bcs.string()])
+        ),
+      }),
+    })
+    const compilerPayloadBytes: Uint8Array = compilierPayloadBcsType
+      .serialize({
+        package_path: this.packagePath,
+        verbose: false,
+        build_config: {
+          dev_mode: this.buildOptions.devMode || false,
+          test_mode: this.buildOptions.testMode || false,
+          generate_docs: this.buildOptions.generateDocs || false,
+          generate_abis: this.buildOptions.generateAbis || false,
+          install_dir: this.buildOptions.installDir || '',
+          force_recompilation: this.buildOptions.forceRecompilation || false,
+          fetch_deps_only: this.buildOptions.fetchDepsOnly || false,
+          skip_fetch_latest_git_deps:
+            this.buildOptions.skipFetchLatestGitDeps || false,
+          bytecode_version: this.buildOptions.bytecodeVersion || 6,
+          compiler_version: '0',
+          language_version: '0',
+          additional_named_addresses: [],
+        },
+      })
+      .toBytes()
 
-    // set package path
-    rawArgs.package_path.is_nil = false
-    rawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8')
-    rawArgs.package_path.len = Buffer.from(this.packagePath, 'utf-8').length
-
-    // set build config
-    rawArgs.build_config.dev_mode = this.buildOptions.devMode || false
-    rawArgs.build_config.test_mode = this.buildOptions.testMode || false
-    rawArgs.build_config.generate_docs = this.buildOptions.generateDocs || false
-    rawArgs.build_config.generate_abis = this.buildOptions.generateAbis || false
-    rawArgs.build_config.force_recompilation =
-      this.buildOptions.forceRecompilation || false
-    rawArgs.build_config.fetch_deps_only =
-      this.buildOptions.fetchDepsOnly || false
-    rawArgs.build_config.skip_fetch_latest_git_deps =
-      this.buildOptions.skipFetchLatestGitDeps || false
-    rawArgs.build_config.bytecode_version =
-      this.buildOptions.bytecodeVersion || 6
-
-    // set install dir
-    rawArgs.build_config.install_dir.is_nil = false
-    rawArgs.build_config.install_dir.ptr = ref.allocCString(
-      this.buildOptions.installDir || '',
+    const compilerPayload = ref.alloc(ByteSliceViewType)
+    const rawCompilerPayload = compilerPayload.deref()
+    rawCompilerPayload.is_nil = false
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    rawCompilerPayload.len = compilerPayloadBytes.length
+    rawCompilerPayload.ptr = ref.allocCString(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      compilerPayloadBytes.toString(),
       'utf-8'
     )
-    rawArgs.build_config.install_dir.len = Buffer.from(
-      this.buildOptions.installDir || '',
-      'utf-8'
-    ).length
-
-    return rawArgs
+    return compilerPayload
   }
 
   /**
@@ -74,7 +91,7 @@ export class MoveBuilder {
    */
   public new(packageName: string): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const rawArgs = this.makeRawBuildConfig()
+    const compilerArgsPayload = this.makeRawBuildConfig()
 
     const packageNameView = ref.alloc(ByteSliceViewType)
     const rawPackageNameView = packageNameView.deref()
@@ -83,10 +100,11 @@ export class MoveBuilder {
     rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.create_new_move_package.async,
       errMsg,
       'utf-8',
-      rawArgs,
+      compilerArgsPayload,
       packageNameView
     )
   }
@@ -99,13 +117,14 @@ export class MoveBuilder {
    */
   public async clean(options?: CleanOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const rawArgs = this.makeRawBuildConfig()
+    const compilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.clean_move_package.async,
       errMsg,
       'utf-8',
-      rawArgs,
+      compilerArgsPayload,
       options?.cleanCache || false,
       options?.cleanByProduct || false,
       options?.force === undefined ? true : options?.force
@@ -120,13 +139,14 @@ export class MoveBuilder {
    */
   public async build(): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const rawArgs = this.makeRawBuildConfig()
+    const compilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.build_move_package.async,
       errMsg,
       'utf-8',
-      rawArgs
+      compilerArgsPayload
     )
   }
 
@@ -175,35 +195,49 @@ export class MoveBuilder {
   public async test(options?: TestOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
 
-    const buildRawArgs = this.makeRawBuildConfig()
+    const compilerArgsPayload = this.makeRawBuildConfig()
 
-    buildRawArgs.package_path.is_nil = false
-    buildRawArgs.package_path.ptr = ref.allocCString(this.packagePath, 'utf-8')
-    buildRawArgs.package_path.len = Buffer.from(
-      this.packagePath,
+    const testOptBcsType = bcs.struct('TestOptions', {
+      gas_limit: bcs.u64(),
+      list: bcs.bool(),
+      num_threads: bcs.u64(),
+      report_statistics: bcs.bool(),
+      report_storage_on_error: bcs.bool(),
+      ignore_compile_warnings: bcs.bool(),
+      check_stackless_vm: bcs.bool(),
+      verbose_mode: bcs.bool(),
+      compute_coverage: bcs.bool(),
+    })
+    const testOptBytes = testOptBcsType
+      .serialize({
+        gas_limit: options?.gasLimit || 1000000000,
+        list: options?.list || false,
+        num_threads: options?.numThreads || 1,
+        report_statistics: options?.reportStatistics || false,
+        report_storage_on_error: options?.reportStorageOnError || false,
+        ignore_compile_warnings: options?.ignoreCompileWarnings || false,
+        check_stackless_vm: options?.checkStacklessVm || false,
+        verbose_mode: options?.verboseMode || false,
+        compute_coverage: options?.computeCoverage || false,
+      })
+      .toBytes()
+    const testOpt = ref.alloc(ByteSliceViewType)
+    const rawTestOpt = testOpt.deref()
+    rawTestOpt.is_nil = false
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    rawTestOpt.len = testOptBytes.length
+    rawTestOpt.ptr = ref.allocCString(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      testOptBytes.toString(),
       'utf-8'
-    ).length
-
-    const testArgs = ref.alloc(InitiaCompilerTestOptionType)
-    const testRawArgs = testArgs.deref()
-
-    testRawArgs.gas_limit = options?.gasLimit || 1_000_000
-    testRawArgs.list = options?.list || false
-    testRawArgs.num_threads = options?.numThreads || 1
-    testRawArgs.report_statistics = options?.reportStatistics || false
-    testRawArgs.report_storage_on_error = options?.reportStorageOnError || false
-    testRawArgs.ignore_compile_warnings =
-      options?.ignoreCompileWarnings || false
-    testRawArgs.check_stackless_vm = options?.checkStacklessVm || false
-    testRawArgs.verbose_mode = options?.verboseMode || false
-    testRawArgs.compute_coverage = options?.computeCoverage || false
-
+    )
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.test_move_package.async,
       errMsg,
       'utf-8',
-      buildRawArgs,
-      testRawArgs
+      compilerArgsPayload,
+      rawTestOpt
     )
   }
 
@@ -236,6 +270,7 @@ export class MoveBuilder {
     rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.convert_module_name.async,
       errMsg,
       'buffer',
@@ -267,6 +302,7 @@ export class MoveBuilder {
     rawModuleBytesView.len = moduleBytes.length
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.decode_module_bytes.async,
       errMsg,
       'utf-8',
@@ -297,6 +333,7 @@ export class MoveBuilder {
     rawScriptBytesView.len = scriptBytes.length
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.decode_script_bytes.async,
       errMsg,
       'utf-8',
@@ -327,6 +364,7 @@ export class MoveBuilder {
     rawCompiledView.len = compiledBinary.length
 
     return handleResponse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.read_module_info.async,
       errMsg,
       'utf-8',

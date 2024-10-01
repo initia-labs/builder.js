@@ -1,12 +1,10 @@
 import ref from '@eleccookie/ref-napi'
 import ffi from '@eleccookie/ffi-napi'
-import path = require('path')
+import * as path from 'path'
 import {
   UnmanagedVectorType,
   UnmanagedVectorPtr,
-  InitiaCompilerArgumentType,
   ByteSliceViewType,
-  InitiaCompilerTestOptionType,
 } from './types'
 
 let compilerName: string
@@ -29,13 +27,13 @@ export const libcompiler = ffi.Library(
   {
     create_new_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, InitiaCompilerArgumentType, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
     ],
     clean_move_package: [
       UnmanagedVectorType,
       [
         UnmanagedVectorPtr,
-        InitiaCompilerArgumentType,
+        ByteSliceViewType,
         ref.types.bool,
         ref.types.bool,
         ref.types.bool,
@@ -43,15 +41,11 @@ export const libcompiler = ffi.Library(
     ],
     build_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, InitiaCompilerArgumentType],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     test_move_package: [
       UnmanagedVectorType,
-      [
-        UnmanagedVectorPtr,
-        InitiaCompilerArgumentType,
-        InitiaCompilerTestOptionType,
-      ],
+      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
     ],
   }
 )
