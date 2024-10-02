@@ -4,7 +4,7 @@ import * as path from 'path'
 import {
   UnmanagedVectorType,
   UnmanagedVectorPtr,
-  ByteSliceViewType,
+  ByteSliceViewPtr,
 } from './types'
 
 let compilerName: string
@@ -27,13 +27,13 @@ export const libcompiler = ffi.Library(
   {
     create_new_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
     ],
     clean_move_package: [
       UnmanagedVectorType,
       [
         UnmanagedVectorPtr,
-        ByteSliceViewType,
+        ByteSliceViewPtr,
         ref.types.bool,
         ref.types.bool,
         ref.types.bool,
@@ -41,11 +41,11 @@ export const libcompiler = ffi.Library(
     ],
     build_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
     test_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
     ],
   }
 )
@@ -55,27 +55,27 @@ export const libmovevm = ffi.Library(
   {
     convert_module_name: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
     ],
     read_module_info: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
     stringify_struct_tag: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
     parse_struct_tag: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
     decode_module_bytes: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
     decode_script_bytes: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType],
+      [UnmanagedVectorPtr, ByteSliceViewPtr],
     ],
   }
 )

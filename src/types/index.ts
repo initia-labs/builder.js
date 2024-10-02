@@ -20,6 +20,8 @@ export const ByteSliceViewType = StructType({
   len: ref.types.size_t,
 })
 
+export const ByteSliceViewPtr = ref.refType(ByteSliceViewType)
+
 ///////////////////
 //  clean config //
 ///////////////////
@@ -43,17 +45,17 @@ export interface BuildOptions {
   fetchDepsOnly?: boolean
   skipFetchLatestGitDeps?: boolean
   bytecodeVersion?: number
+  compilerVersion?: string
+  languageVersion?: string
+  addtionalNamedAddresses?: [string, string][]
 }
-
+///////////////////
+//  test config //
+///////////////////
 export interface TestOptions {
-  gasLimit?: number
   filter?: string
-  list?: boolean
-  numThreads?: number
   reportStatistics?: boolean
   reportStorageOnError?: boolean
   ignoreCompileWarnings?: boolean
-  checkStacklessVm?: boolean
-  verboseMode?: boolean
   computeCoverage?: boolean
 }

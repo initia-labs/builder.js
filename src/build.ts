@@ -11,7 +11,7 @@ import {
 } from './types'
 import { libcompiler, libmovevm } from './vm'
 import { handleResponse, createRawErrMsg } from './utils'
-import { bcs } from '@initia/initia.js'
+import { compilerPayloadBcsType, testOptBcsType } from './types/bcs'
 
 export class MoveBuilder {
   private readonly packagePath: string
@@ -28,55 +28,38 @@ export class MoveBuilder {
   }
 
   makeRawBuildConfig = () => {
-    const compilierPayloadBcsType = bcs.struct('CompilerArguments', {
-      package_path: bcs.option(bcs.string()),
-      verbose: bcs.bool(),
-      build_config: bcs.struct('BuildConfig', {
-        dev_mode: bcs.bool(),
-        test_mode: bcs.bool(),
-        generate_docs: bcs.bool(),
-        generate_abis: bcs.bool(),
-        install_dir: bcs.option(bcs.string()),
-        force_recompilation: bcs.bool(),
-        fetch_deps_only: bcs.bool(),
-        skip_fetch_latest_git_deps: bcs.bool(),
-        bytecode_version: bcs.u32(),
-        compiler_version: bcs.string(),
-        language_version: bcs.string(),
-        additional_named_addresses: bcs.vector(
-          bcs.tuple([bcs.string(), bcs.string()])
-        ),
-      }),
-    })
-    const compilerPayloadBytes: Uint8Array = compilierPayloadBcsType
-      .serialize({
-        package_path: this.packagePath,
-        verbose: false,
-        build_config: {
-          dev_mode: this.buildOptions.devMode || false,
-          test_mode: this.buildOptions.testMode || false,
-          generate_docs: this.buildOptions.generateDocs || false,
-          generate_abis: this.buildOptions.generateAbis || false,
-          install_dir: this.buildOptions.installDir || '',
-          force_recompilation: this.buildOptions.forceRecompilation || false,
-          fetch_deps_only: this.buildOptions.fetchDepsOnly || false,
-          skip_fetch_latest_git_deps:
-            this.buildOptions.skipFetchLatestGitDeps || false,
-          bytecode_version: this.buildOptions.bytecodeVersion || 6,
-          compiler_version: '0',
-          language_version: '0',
-          additional_named_addresses: [],
-        },
-      })
-      .toBytes()
-
+    const compilerPayloadBytes = Buffer.from(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      compilerPayloadBcsType
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        .serialize({
+          package_path: this.packagePath,
+          verbose: false,
+          build_config: {
+            dev_mode: this.buildOptions.devMode || false,
+            test_mode: this.buildOptions.testMode || false,
+            generate_docs: this.buildOptions.generateDocs || false,
+            generate_abis: this.buildOptions.generateAbis || false,
+            install_dir: this.buildOptions.installDir || '',
+            force_recompilation: this.buildOptions.forceRecompilation || false,
+            fetch_deps_only: this.buildOptions.fetchDepsOnly || false,
+            skip_fetch_latest_git_deps:
+              this.buildOptions.skipFetchLatestGitDeps || false,
+            bytecode_version: this.buildOptions.bytecodeVersion || 6,
+            compiler_version: this.buildOptions.compilerVersion || '0',
+            language_version: this.buildOptions.languageVersion || '0',
+            additional_named_addresses:
+              this.buildOptions.addtionalNamedAddresses || [],
+          },
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        .toBytes() as Uint8Array
+    )
     const compilerPayload = ref.alloc(ByteSliceViewType)
     const rawCompilerPayload = compilerPayload.deref()
     rawCompilerPayload.is_nil = false
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     rawCompilerPayload.len = compilerPayloadBytes.length
     rawCompilerPayload.ptr = ref.allocCString(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       compilerPayloadBytes.toString(),
       'utf-8'
     )
@@ -98,9 +81,7 @@ export class MoveBuilder {
     rawPackageNameView.is_nil = false
     rawPackageNameView.ptr = ref.allocCString(packageName, 'utf-8')
     rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length
-
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.create_new_move_package.async,
       errMsg,
       'utf-8',
@@ -120,7 +101,6 @@ export class MoveBuilder {
     const compilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.clean_move_package.async,
       errMsg,
       'utf-8',
@@ -142,7 +122,6 @@ export class MoveBuilder {
     const compilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.build_move_package.async,
       errMsg,
       'utf-8',
@@ -194,50 +173,32 @@ export class MoveBuilder {
    */
   public async test(options?: TestOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-
     const compilerArgsPayload = this.makeRawBuildConfig()
-
-    const testOptBcsType = bcs.struct('TestOptions', {
-      gas_limit: bcs.u64(),
-      list: bcs.bool(),
-      num_threads: bcs.u64(),
-      report_statistics: bcs.bool(),
-      report_storage_on_error: bcs.bool(),
-      ignore_compile_warnings: bcs.bool(),
-      check_stackless_vm: bcs.bool(),
-      verbose_mode: bcs.bool(),
-      compute_coverage: bcs.bool(),
-    })
-    const testOptBytes = testOptBcsType
-      .serialize({
-        gas_limit: options?.gasLimit || 1000000000,
-        list: options?.list || false,
-        num_threads: options?.numThreads || 1,
-        report_statistics: options?.reportStatistics || false,
-        report_storage_on_error: options?.reportStorageOnError || false,
-        ignore_compile_warnings: options?.ignoreCompileWarnings || false,
-        check_stackless_vm: options?.checkStacklessVm || false,
-        verbose_mode: options?.verboseMode || false,
-        compute_coverage: options?.computeCoverage || false,
-      })
-      .toBytes()
+    const testOptBytes = Buffer.from(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+      testOptBcsType
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        .serialize({
+          filter: options?.filter || '',
+          report_statistics: options?.reportStatistics || false,
+          report_storage_on_error: options?.reportStorageOnError || false,
+          ignore_compile_warnings: options?.ignoreCompileWarnings || false,
+          compute_coverage: options?.computeCoverage || false,
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        .toBytes()
+    )
     const testOpt = ref.alloc(ByteSliceViewType)
     const rawTestOpt = testOpt.deref()
     rawTestOpt.is_nil = false
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     rawTestOpt.len = testOptBytes.length
-    rawTestOpt.ptr = ref.allocCString(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      testOptBytes.toString(),
-      'utf-8'
-    )
+    rawTestOpt.ptr = ref.allocCString(testOptBytes.toString(), 'utf-8')
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libcompiler.test_move_package.async,
       errMsg,
       'utf-8',
       compilerArgsPayload,
-      rawTestOpt
+      testOpt
     )
   }
 
@@ -270,12 +231,11 @@ export class MoveBuilder {
     rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.convert_module_name.async,
       errMsg,
       'buffer',
-      rawPrecompiledView,
-      rawModuleNameView
+      precompiledView,
+      moduleNameView
     )
   }
 
@@ -302,11 +262,10 @@ export class MoveBuilder {
     rawModuleBytesView.len = moduleBytes.length
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.decode_module_bytes.async,
       errMsg,
       'utf-8',
-      rawModuleBytesView
+      moduleBytesView
     )
   }
 
@@ -333,11 +292,10 @@ export class MoveBuilder {
     rawScriptBytesView.len = scriptBytes.length
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.decode_script_bytes.async,
       errMsg,
       'utf-8',
-      rawScriptBytesView
+      scriptBytesView
     )
   }
 
@@ -364,11 +322,10 @@ export class MoveBuilder {
     rawCompiledView.len = compiledBinary.length
 
     return handleResponse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       libmovevm.read_module_info.async,
       errMsg,
       'utf-8',
-      rawCompiledView
+      compiledView
     )
   }
 }
