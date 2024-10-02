@@ -28,7 +28,7 @@
   },
   "scripts": {
     "lint": "npx eslint . --fix",
-    "build": "tsc --module commonjs",
+    "build": "tsc --build",
     "test": "jest --no-cache",
     "prepare": "husky install"
   },
@@ -50,13 +50,13 @@
     "ts-jest": "^29.2.3",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.15",
-    "typescript": "^4.8.3"
+    "typedoc": "^0.26.7",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@eleccookie/ffi-napi": "^0.0.1",
     "@eleccookie/ref-napi": "^0.0.2",
-    "@mysten/bcs": "^1.0.2",
+    "@mysten/bcs": "^1.1.0",
     "ref-struct-di": "^1.1.1",
     "typescript-eslint": "^7.17.0"
   },

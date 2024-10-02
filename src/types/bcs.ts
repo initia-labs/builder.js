@@ -1,4 +1,5 @@
 import { bcs, BcsType } from '@mysten/bcs'
+
 interface CompilerBuildConfig {
   [key: string]: BcsType<unknown, unknown>
   dev_mode: BcsType<boolean>
