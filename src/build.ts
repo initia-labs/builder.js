@@ -52,7 +52,7 @@ export class MoveBuilder {
               this.buildOptions.addtionalNamedAddresses || [],
           },
         })
-        .toBytes() as Uint8Array
+        .toBytes()
     )
     const compilerPayload = ref.alloc(ByteSliceViewType)
     const rawCompilerPayload = compilerPayload.deref()
@@ -62,7 +62,7 @@ export class MoveBuilder {
       compilerPayloadBytes.toString(),
       'utf-8'
     )
-    return compilerPayload
+    return rawCompilerPayload
   }
 
   /**
@@ -77,7 +77,7 @@ export class MoveBuilder {
     minitia = false
   ): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const compilerArgsPayload = this.makeRawBuildConfig()
+    const rawCompilerArgsPayload = this.makeRawBuildConfig()
 
     const packageNameView = ref.alloc(ByteSliceViewType)
     const rawPackageNameView = packageNameView.deref()
@@ -96,9 +96,9 @@ export class MoveBuilder {
       libcompiler.create_new_move_package.async,
       errMsg,
       'utf-8',
-      compilerArgsPayload,
-      packageNameView,
-      moveVersionView,
+      rawCompilerArgsPayload,
+      rawPackageNameView,
+      rawMoveVersionView,
       minitia
     )
   }
@@ -111,13 +111,13 @@ export class MoveBuilder {
    */
   public async clean(options?: CleanOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const compilerArgsPayload = this.makeRawBuildConfig()
+    const rawCompilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
       libcompiler.clean_move_package.async,
       errMsg,
       'utf-8',
-      compilerArgsPayload,
+      rawCompilerArgsPayload,
       options?.cleanCache || false,
       options?.cleanByProduct || false,
       options?.force === undefined ? true : options?.force
@@ -132,13 +132,13 @@ export class MoveBuilder {
    */
   public async build(): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const compilerArgsPayload = this.makeRawBuildConfig()
+    const rawCompilerArgsPayload = this.makeRawBuildConfig()
 
     return handleResponse(
       libcompiler.build_move_package.async,
       errMsg,
       'utf-8',
-      compilerArgsPayload
+      rawCompilerArgsPayload
     )
   }
 
@@ -186,7 +186,7 @@ export class MoveBuilder {
    */
   public async test(options?: TestOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
-    const compilerArgsPayload = this.makeRawBuildConfig()
+    const rawCompilerArgsPayload = this.makeRawBuildConfig()
     const testOptBytes = Buffer.from(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       testOptBcsType
@@ -210,8 +210,8 @@ export class MoveBuilder {
       libcompiler.test_move_package.async,
       errMsg,
       'utf-8',
-      compilerArgsPayload,
-      testOpt
+      rawCompilerArgsPayload,
+      rawTestOpt
     )
   }
 
@@ -247,8 +247,8 @@ export class MoveBuilder {
       libmovevm.convert_module_name.async,
       errMsg,
       'buffer',
-      precompiledView,
-      moduleNameView
+      rawPrecompiledView,
+      rawModuleNameView
     )
   }
 
@@ -278,7 +278,7 @@ export class MoveBuilder {
       libmovevm.decode_module_bytes.async,
       errMsg,
       'utf-8',
-      moduleBytesView
+      rawModuleBytesView
     )
   }
 
@@ -308,7 +308,7 @@ export class MoveBuilder {
       libmovevm.decode_script_bytes.async,
       errMsg,
       'utf-8',
-      scriptBytesView
+      rawScriptBytesView
     )
   }
 
@@ -338,7 +338,7 @@ export class MoveBuilder {
       libmovevm.read_module_info.async,
       errMsg,
       'utf-8',
-      compiledView
+      rawCompiledView
     )
   }
 }
