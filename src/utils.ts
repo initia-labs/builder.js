@@ -37,7 +37,8 @@ export async function handleResponse(
     method(errMsg, ...args, (_err: unknown, res: ErrMsgStruct) => {
       const resErrMsg = errMsg.deref()
 
-      console.log(Buffer.from(resErrMsg.ptr).toString('utf-8'))
+      console.log(resErrMsg)
+      console.log(resErrMsg.toJSON())
 
       if (!resErrMsg.is_none) {
         // If the error message is not "none", reject the promise with the error.
