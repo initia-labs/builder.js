@@ -1,4 +1,4 @@
-name: Build & Test
+name: Test & Build builder.js
 on:
   workflow_dispatch:
   pull_request:
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   test:
-    name: Build & Test
+    name: Test & Build
     runs-on: ubuntu-latest
     env: 
       # for private repo access

@@ -7,17 +7,17 @@ describe('build move package', () => {
   const contractDir = 'contract/dummy'
   const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {})
 
-  // it('build correctly', async () => {
-  //   expect(await builder.build()).toEqual('ok')
-  //   expect(await builder.get('dummy')).toEqual(
-  //     await readFile(
-  //       path.resolve(
-  //         __dirname,
-  //         `${contractDir}/build/DummyContract/bytecode_modules/dummy.mv`
-  //       )
-  //     )
-  //   )
-  // })
+  it('build correctly', async () => {
+    expect(await builder.build()).toEqual('ok')
+    expect(await builder.get('dummy')).toEqual(
+      await readFile(
+        path.resolve(
+          __dirname,
+          `${contractDir}/build/DummyContract/bytecode_modules/dummy.mv`
+        )
+      )
+    )
+  })
 
   it('decode module bytes', async () => {
     const binary = await builder.get('dummy')
