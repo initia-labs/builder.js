@@ -38,11 +38,10 @@ const compilerBuildConfig: CompilerBuildConfig = {
     >
   ),
 }
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+
 export const compilerPayloadBcsType = bcs.struct('CompilerArguments', {
   package_path: bcs.option(bcs.string()),
   verbose: bcs.bool(),
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   build_config: bcs.struct('BuildConfig', compilerBuildConfig),
 })
 
@@ -54,5 +53,4 @@ const testOption = {
   compute_coverage: bcs.bool(),
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 export const testOptBcsType = bcs.struct('TestOptions', testOption)

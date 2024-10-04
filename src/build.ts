@@ -52,8 +52,7 @@ export class MoveBuilder {
               this.buildOptions.addtionalNamedAddresses || [],
           },
         })
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        .toBytes() as Uint8Array
+        .toBytes()
     )
     const compilerPayload = ref.alloc(ByteSliceViewType)
     const rawCompilerPayload = compilerPayload.deref()
@@ -200,7 +199,7 @@ export class MoveBuilder {
           compute_coverage: options?.computeCoverage || false,
         })
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        .toBytes() as Uint8Array
+        .toBytes()
     )
     const testOpt = ref.alloc(ByteSliceViewType)
     const rawTestOpt = testOpt.deref()
