@@ -30,7 +30,6 @@ jobs:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GH_READ_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
       - run: npm install
       - run: npm run test
       - run: npm run lint
