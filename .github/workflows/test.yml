@@ -25,12 +25,13 @@ concurrency:
 jobs:
   test:
     name: Test & Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env: 
       # for private repo access
       GITHUB_ACCESS_TOKEN: ${{ secrets.GH_READ_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - run: npm install
+      - run: npm run test
       - run: npm run lint
       - run: npm run build
