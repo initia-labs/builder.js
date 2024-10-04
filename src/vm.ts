@@ -2,9 +2,9 @@ import ref from '@eleccookie/ref-napi'
 import ffi from '@eleccookie/ffi-napi'
 import * as path from 'path'
 import {
-  UnmanagedVectorType,
   UnmanagedVectorPtr,
-  ByteSliceViewPtr,
+  ByteSliceViewType,
+  UnmanagedVectorType,
 } from './types'
 
 let compilerName: string
@@ -29,9 +29,9 @@ export const libcompiler = ffi.Library(
       UnmanagedVectorType,
       [
         UnmanagedVectorPtr,
-        ByteSliceViewPtr,
-        ByteSliceViewPtr,
-        ByteSliceViewPtr,
+        ByteSliceViewType,
+        ByteSliceViewType,
+        ByteSliceViewType,
         ref.types.bool,
       ],
     ],
@@ -39,7 +39,7 @@ export const libcompiler = ffi.Library(
       UnmanagedVectorType,
       [
         UnmanagedVectorPtr,
-        ByteSliceViewPtr,
+        ByteSliceViewType,
         ref.types.bool,
         ref.types.bool,
         ref.types.bool,
@@ -47,11 +47,11 @@ export const libcompiler = ffi.Library(
     ],
     build_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     test_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
     ],
   }
 )
@@ -61,27 +61,27 @@ export const libmovevm = ffi.Library(
   {
     convert_module_name: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
     ],
     read_module_info: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     stringify_struct_tag: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     parse_struct_tag: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     decode_module_bytes: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
     decode_script_bytes: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr],
+      [UnmanagedVectorPtr, ByteSliceViewType],
     ],
   }
 )
