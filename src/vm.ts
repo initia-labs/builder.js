@@ -27,7 +27,13 @@ export const libcompiler = ffi.Library(
   {
     create_new_move_package: [
       UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewPtr, ByteSliceViewPtr],
+      [
+        UnmanagedVectorPtr,
+        ByteSliceViewPtr,
+        ByteSliceViewPtr,
+        ByteSliceViewPtr,
+        ref.types.bool,
+      ],
     ],
     clean_move_package: [
       UnmanagedVectorType,

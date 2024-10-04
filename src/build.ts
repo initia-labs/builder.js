@@ -72,7 +72,11 @@ export class MoveBuilder {
    *
    * @returns if success return "ok", else throw an error
    */
-  public new(packageName: string): Promise<FFIResult> {
+  public new(
+    packageName: string,
+    moveVersion = 'main',
+    minitia = false
+  ): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
     const compilerArgsPayload = this.makeRawBuildConfig()
 
@@ -81,12 +85,22 @@ export class MoveBuilder {
     rawPackageNameView.is_nil = false
     rawPackageNameView.ptr = ref.allocCString(packageName, 'utf-8')
     rawPackageNameView.len = Buffer.from(packageName, 'utf-8').length
+
+    const moveVersionView = ref.alloc(ByteSliceViewType)
+    const rawMoveVersionView = moveVersionView.deref()
+    rawMoveVersionView.is_nil = !moveVersion
+    rawMoveVersionView.ptr = moveVersion
+      ? ref.allocCString(moveVersion)
+      : ref.NULL
+    rawMoveVersionView.len = Buffer.from(moveVersion, 'utf-8').length
     return handleResponse(
       libcompiler.create_new_move_package.async,
       errMsg,
       'utf-8',
       compilerArgsPayload,
-      packageNameView
+      packageNameView,
+      moveVersionView,
+      minitia
     )
   }
 
@@ -175,7 +189,7 @@ export class MoveBuilder {
     const errMsg = createRawErrMsg()
     const compilerArgsPayload = this.makeRawBuildConfig()
     const testOptBytes = Buffer.from(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       testOptBcsType
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .serialize({
@@ -186,7 +200,7 @@ export class MoveBuilder {
           compute_coverage: options?.computeCoverage || false,
         })
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        .toBytes()
+        .toBytes() as Uint8Array
     )
     const testOpt = ref.alloc(ByteSliceViewType)
     const rawTestOpt = testOpt.deref()
