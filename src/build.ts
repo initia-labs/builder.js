@@ -52,7 +52,7 @@ export class MoveBuilder {
               this.buildOptions.addtionalNamedAddresses || [],
           },
         })
-        .toBytes()
+        .toBytes() as Uint8Array
     )
     const compilerPayload = ref.alloc(ByteSliceViewType)
     const rawCompilerPayload = compilerPayload.deref()
