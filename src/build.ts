@@ -29,9 +29,7 @@ export class MoveBuilder {
 
   makeRawBuildConfig = () => {
     const compilerPayloadBytes = Buffer.from(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       compilerPayloadBcsType
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .serialize({
           package_path: this.packagePath,
           verbose: false,
@@ -188,9 +186,7 @@ export class MoveBuilder {
     const errMsg = createRawErrMsg()
     const rawCompilerArgsPayload = this.makeRawBuildConfig()
     const testOptBytes = Buffer.from(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       testOptBcsType
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .serialize({
           filter: options?.filter || '',
           report_statistics: options?.reportStatistics || false,
@@ -198,7 +194,6 @@ export class MoveBuilder {
           ignore_compile_warnings: options?.ignoreCompileWarnings || false,
           compute_coverage: options?.computeCoverage || false,
         })
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .toBytes()
     )
     const testOpt = ref.alloc(ByteSliceViewType)
