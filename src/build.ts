@@ -212,43 +212,6 @@ export class MoveBuilder {
 
   /**
    *
-   * @param precompiledBinary precompiled module bytes code
-   * @param moduleName the module name to change
-   *
-   * @returns name converted module bytes
-   */
-  public static async convert_module_name(
-    precompiledBinary: Buffer,
-    moduleName: string
-  ): Promise<FFIResult> {
-    const errMsg = createRawErrMsg()
-
-    const precompiledView = ref.alloc(ByteSliceViewType)
-    const rawPrecompiledView = precompiledView.deref()
-    rawPrecompiledView.is_nil = false
-    rawPrecompiledView.ptr = ref.allocCString(
-      precompiledBinary.toString('base64'),
-      'base64'
-    )
-    rawPrecompiledView.len = precompiledBinary.length
-
-    const moduleNameView = ref.alloc(ByteSliceViewType)
-    const rawModuleNameView = moduleNameView.deref()
-    rawModuleNameView.is_nil = false
-    rawModuleNameView.ptr = ref.allocCString(moduleName, 'utf-8')
-    rawModuleNameView.len = Buffer.from(moduleName, 'utf-8').length
-
-    return handleResponse(
-      libmovevm.convert_module_name.async,
-      errMsg,
-      'buffer',
-      rawPrecompiledView,
-      rawModuleNameView
-    )
-  }
-
-  /**
-   *
    * Decode module bytes to move module
    *
    * @param moduleBytes move module bytes

@@ -33,19 +33,6 @@ describe('build move package', () => {
     )
   })
 
-  it('convert module name', async () => {
-    const binary = await builder.get('dummy')
-    expect(await MoveBuilder.convert_module_name(binary, 'hihi')).toEqual(
-      await readFile(
-        path.resolve(
-          __dirname,
-          `${contractDir}/build/DummyContract/bytecode_modules/hihi.mv`
-        ),
-        'utf-8'
-      )
-    )
-  })
-
   it('clean move pacakge correctly', async () => {
     expect(await builder.clean({})).toEqual('ok')
   })

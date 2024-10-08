@@ -59,10 +59,6 @@ export const libcompiler = ffi.Library(
 export const libmovevm = ffi.Library(
   path.resolve(__dirname, `../library/${movevmName}`),
   {
-    convert_module_name: [
-      UnmanagedVectorType,
-      [UnmanagedVectorPtr, ByteSliceViewType, ByteSliceViewType],
-    ],
     read_module_info: [
       UnmanagedVectorType,
       [UnmanagedVectorPtr, ByteSliceViewType],
