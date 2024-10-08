@@ -43,7 +43,7 @@ export class MoveBuilder {
             fetch_deps_only: this.buildOptions.fetchDepsOnly || false,
             skip_fetch_latest_git_deps:
               this.buildOptions.skipFetchLatestGitDeps || false,
-            bytecode_version: this.buildOptions.bytecodeVersion || 6,
+            bytecode_version: this.buildOptions.bytecodeVersion || 0,
             compiler_version: this.buildOptions.compilerVersion || '0',
             language_version: this.buildOptions.languageVersion || '0',
             additional_named_addresses:
