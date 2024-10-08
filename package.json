@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "Initia Foundation",
@@ -24,7 +24,7 @@
     "library"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "lint": "npx eslint . --fix",
