@@ -2,11 +2,15 @@ import { MoveBuilder } from '../build'
 import path from 'path'
 
 describe('test move package', () => {
-  jest.setTimeout(200000)
-  const contractDir = 'contract/simple'
+  const contractDir = path.resolve(__dirname, 'contract/simple')
+  const builder = new MoveBuilder(contractDir, {})
 
-  it('test correctly', async () => {
-    const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {})
-    expect(await builder.test()).toEqual('ok')
+  beforeAll(() => {
+    jest.setTimeout(200000)
+  })
+
+  it('executes tests successfully', async () => {
+    const testResult = await builder.test()
+    expect(testResult).toEqual('ok')
   })
 })

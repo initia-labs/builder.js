@@ -2,20 +2,22 @@ import { MoveBuilder } from '../build'
 import path from 'path'
 import { readFile } from 'fs/promises'
 
-describe('build script', () => {
-  const contractDir = 'contract/script'
-  const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {
-    devMode: true,
-  })
+describe('build script and decode', () => {
+  const contractDir = path.resolve(__dirname, 'contract/script')
+  const builder = new MoveBuilder(contractDir, { devMode: true })
 
-  it('build script', async () => {
+  it('builds the script successfully', async () => {
     expect(await builder.build()).toEqual('ok')
   }, 100000000)
 
-  it('decode_script_bytes', async () => {
-    const bytePath = 'contract/script/build/script/bytecode_scripts/even_0.mv'
-    const binary = await readFile(path.resolve(__dirname, bytePath))
-    expect(await MoveBuilder.decode_script_bytes(binary)).toEqual(
+  it('decodes script bytes', async () => {
+    const bytePath = path.resolve(
+      __dirname,
+      'contract/script/build/script/bytecode_scripts/even_0.mv'
+    )
+    const binary = await readFile(bytePath)
+    const decodedScript = await MoveBuilder.decode_script_bytes(binary)
+    expect(decodedScript).toEqual(
       '{"name":"main","visibility":"public","is_entry":true,"is_view":false,"generic_type_params":[],"params":["u64"],"return":[]}'
     )
   })
