@@ -93,7 +93,6 @@ export class MoveBuilder {
     return handleResponse(
       libcompiler.create_new_move_package.async,
       errMsg,
-      'utf-8',
       rawCompilerArgsPayload,
       rawPackageNameView,
       rawMoveVersionView,
@@ -114,7 +113,6 @@ export class MoveBuilder {
     return handleResponse(
       libcompiler.clean_move_package.async,
       errMsg,
-      'utf-8',
       rawCompilerArgsPayload,
       options?.cleanCache || false,
       options?.cleanByProduct || false,
@@ -135,7 +133,6 @@ export class MoveBuilder {
     return handleResponse(
       libcompiler.build_move_package.async,
       errMsg,
-      'utf-8',
       rawCompilerArgsPayload
     )
   }
@@ -204,7 +201,6 @@ export class MoveBuilder {
     return handleResponse(
       libcompiler.test_move_package.async,
       errMsg,
-      'utf-8',
       rawCompilerArgsPayload,
       rawTestOpt
     )
@@ -235,7 +231,6 @@ export class MoveBuilder {
     return handleResponse(
       libmovevm.decode_module_bytes.async,
       errMsg,
-      'utf-8',
       rawModuleBytesView
     )
   }
@@ -265,7 +260,6 @@ export class MoveBuilder {
     return handleResponse(
       libmovevm.decode_script_bytes.async,
       errMsg,
-      'utf-8',
       rawScriptBytesView
     )
   }
@@ -295,7 +289,6 @@ export class MoveBuilder {
     return handleResponse(
       libmovevm.read_module_info.async,
       errMsg,
-      'utf-8',
       rawCompiledView
     )
   }

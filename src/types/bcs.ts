@@ -18,7 +18,7 @@ interface CompilerBuildConfig {
     Iterable<[string, string]> & { length: number }
   >
 }
-// Build Config Bcs
+// Build Config with BCS
 const compilerBuildConfig: CompilerBuildConfig = {
   dev_mode: bcs.bool(),
   test_mode: bcs.bool(),
