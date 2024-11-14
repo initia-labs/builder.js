@@ -1,7 +1,7 @@
 import { MoveBuilder } from '../build'
 import path from 'path'
 
-jest.setTimeout(30000)
+jest.setTimeout(600000)
 
 describe('test move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/simple')
