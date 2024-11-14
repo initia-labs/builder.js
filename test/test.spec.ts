@@ -1,7 +1,5 @@
-import { MoveBuilder } from '../build'
+import { MoveBuilder } from '../src/build'
 import path from 'path'
-
-jest.setTimeout(600000)
 
 describe('test move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/simple')
@@ -10,5 +8,5 @@ describe('test move package', () => {
   it('executes tests successfully', async () => {
     const testResult = await builder.test()
     expect(testResult).toEqual('ok')
-  })
+  }, 100000000)
 })

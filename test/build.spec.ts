@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import { MoveBuilder } from '../build'
+import { MoveBuilder } from '../src/build'
 import path from 'path'
 
 describe('build move package', () => {

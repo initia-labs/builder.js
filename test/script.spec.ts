@@ -1,4 +1,4 @@
-import { MoveBuilder } from '../build'
+import { MoveBuilder } from '../src/build'
 import path from 'path'
 import { readFile } from 'fs/promises'
 
