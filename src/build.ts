@@ -28,6 +28,15 @@ export class MoveBuilder {
   }
 
   makeRawBuildConfig = () => {
+    const additionalNamedAddresses: [string, Uint8Array][] = this.buildOptions
+      .addtionalNamedAddresses
+      ? this.buildOptions.addtionalNamedAddresses.map(([name, address]) => {
+          if (address.startsWith('0x')) {
+            address = address.slice(2).padStart(64, '0')
+          }
+          return [name, Buffer.from(address, 'hex')]
+        })
+      : []
     const compilerPayloadBytes = Buffer.from(
       compilerPayloadBcsType
         .serialize({
@@ -46,8 +55,7 @@ export class MoveBuilder {
             bytecode_version: this.buildOptions.bytecodeVersion || 0,
             compiler_version: this.buildOptions.compilerVersion || '0',
             language_version: this.buildOptions.languageVersion || '0',
-            additional_named_addresses:
-              this.buildOptions.addtionalNamedAddresses || [],
+            additional_named_addresses: additionalNamedAddresses,
           },
         })
         .toBytes()

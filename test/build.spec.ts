@@ -4,7 +4,10 @@ import path from 'path'
 
 describe('build move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/dummy')
-  const builder = new MoveBuilder(contractDir, {})
+  const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {
+    devMode: true,
+    addtionalNamedAddresses: [['test', '0x4']],
+  })
   const dummyModulePath = path.join(
     contractDir,
     'build/DummyContract/bytecode_modules/dummy.mv'
