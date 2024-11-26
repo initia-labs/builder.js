@@ -1,0 +1,10 @@
+[package]
+name = "DummyContract"
+version = "1.0.0"
+
+[dependencies]
+
+[addresses]
+std = "0x1"
+initia_std = "0x1"
+test="_"
