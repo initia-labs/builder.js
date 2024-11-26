@@ -5,7 +5,10 @@ import path from 'path'
 describe('build move package', () => {
   jest.setTimeout(20000)
   const contractDir = 'contract/dummy'
-  const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {})
+  const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {
+    devMode: true,
+    addtionalNamedAddresses: [['test', '0x4']],
+  })
 
   it('build correctly', async () => {
     expect(await builder.build()).toEqual('ok')
@@ -34,6 +37,6 @@ describe('build move package', () => {
   })
 
   it('clean move pacakge correctly', async () => {
-    expect(await builder.clean({})).toEqual('ok')
+    expect(await builder.clean()).toEqual('ok')
   })
 })

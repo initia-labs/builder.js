@@ -14,8 +14,8 @@ interface CompilerBuildConfig {
   compiler_version: BcsType<string>
   language_version: BcsType<string>
   additional_named_addresses: BcsType<
-    [string, string][],
-    Iterable<[string, string]> & { length: number }
+    [string, Uint8Array][],
+    Iterable<readonly [string, Uint8Array]> & { length: number }
   >
 }
 // Build Config Bcs
@@ -32,10 +32,7 @@ const compilerBuildConfig: CompilerBuildConfig = {
   compiler_version: bcs.string(),
   language_version: bcs.string(),
   additional_named_addresses: bcs.vector(
-    bcs.tuple([bcs.string(), bcs.string()]) as BcsType<
-      [string, string],
-      [string, string]
-    >
+    bcs.tuple([bcs.string(), bcs.bytes(32)])
   ),
 }
 
