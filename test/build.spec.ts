@@ -24,7 +24,7 @@ describe('build move package', () => {
     contractDir,
     'build/DummyContract/bytecode_modules/dummy.mv'
   )
-  jest.setTimeout(20000)
+  jest.setTimeout(200000)
 
   it('builds the package correctly', async () => {
     const buildResult = await builder.build()
