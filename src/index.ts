@@ -1,2 +1,2 @@
-export * from './build'
-export { FFIResult, BuildOptions, TestOptions } from './types/index'
+export { FFIResult, BuildOptions, TestOptions } from 'types'
+export * from './builder'

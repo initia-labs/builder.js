@@ -1,24 +1,9 @@
 import ref from '@eleccookie/ref-napi'
-import struct from 'ref-struct-di'
-import { UnmanagedVectorType, FFIResult } from './types'
+import { UnmanagedVectorType, FFIResult, MethodType, ErrMsgStruct } from 'types'
 import { Buffer } from 'buffer'
 
-// define the structure for ErrMsg and Result
-type ErrMsgStruct = struct.StructObject<{
-  is_none: boolean
-  ptr: ref.Pointer<string | null>
-  len: number
-  cap: number
-}>
-
-// Define MethodType as a function that accepts ErrMsg and arguments
-type MethodType = (
-  errMsg: ref.Pointer<ErrMsgStruct>,
-  ...args: unknown[]
-) => void
-
 /**
- * Handles the response from an FFI call.
+ * Handles the response from an FFI call from libmovevm shared library.
  *
  * @param method - The FFI method to invoke.
  * @param errMsg - A pointer to the ErrMsg structure for capturing errors.

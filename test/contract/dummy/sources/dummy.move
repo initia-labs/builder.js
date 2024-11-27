@@ -1,4 +1,4 @@
-module 0x999::dummy {
+module test::dummy {
     public fun return_0(): u32 {
         0
     }

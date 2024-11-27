@@ -5,9 +5,8 @@ import {
   UnmanagedVectorPtr,
   ByteSliceViewType,
   UnmanagedVectorType,
-} from './types'
+} from 'types'
 
-// determine library file names based on platform and architecture
 let compilerName: string
 let movevmName: string
 
@@ -28,9 +27,9 @@ if (process.platform == 'darwin') {
   throw new Error(`${process.platform}/${process.arch} not supported`)
 }
 
-// load the libcompiler library and define its FFI function signatures
+// Load the libcompiler library and define its FFI function signatures
 export const libcompiler = ffi.Library(
-  path.resolve(__dirname, `../library/${compilerName}`),
+  path.resolve(__dirname, `../../library/${compilerName}`),
   {
     create_new_move_package: [
       UnmanagedVectorType,
@@ -65,7 +64,7 @@ export const libcompiler = ffi.Library(
 
 // load the libmovevm library and define its FFI function signatures
 export const libmovevm = ffi.Library(
-  path.resolve(__dirname, `../library/${movevmName}`),
+  path.resolve(__dirname, `../../library/${movevmName}`),
   {
     read_module_info: [
       UnmanagedVectorType,
