@@ -1,5 +1,8 @@
-import ref from '@eleccookie/ref-napi'
 import struct from 'ref-struct-di'
+import ref from '@eleccookie/ref-napi'
+export * from './options'
+export * from './bcs'
+export * from './ffi'
 
 const StructType = struct(ref)
 
@@ -20,32 +23,3 @@ export const ByteSliceViewType = StructType({
   ptr: ref.refType(ref.types.CString),
   len: ref.types.size_t,
 })
-
-export interface CleanOptions {
-  cleanCache?: boolean
-  cleanByProduct?: boolean
-  force?: boolean
-}
-
-export interface BuildOptions {
-  devMode?: boolean
-  testMode?: boolean
-  generateDocs?: boolean
-  generateAbis?: boolean
-  installDir?: string
-  forceRecompilation?: boolean
-  fetchDepsOnly?: boolean
-  skipFetchLatestGitDeps?: boolean
-  bytecodeVersion?: number
-  compilerVersion?: string
-  languageVersion?: string
-  addtionalNamedAddresses?: [string, string][]
-}
-
-export interface TestOptions {
-  filter?: string
-  reportStatistics?: boolean
-  reportStorageOnError?: boolean
-  ignoreCompileWarnings?: boolean
-  computeCoverage?: boolean
-}

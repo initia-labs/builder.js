@@ -2,32 +2,36 @@
 import ref from '@eleccookie/ref-napi'
 import path = require('path')
 import { readFile } from 'fs/promises'
+import { handleResponse, createRawErrMsg, libcompiler, libmovevm } from 'lib'
 import {
   ByteSliceViewType,
-  BuildOptions,
-  TestOptions,
   FFIResult,
+  BuildOptions,
   CleanOptions,
-} from './types'
-import { libcompiler, libmovevm } from './vm'
-import { handleResponse, createRawErrMsg } from './utils'
-import { compilerPayloadBcsType, testOptBcsType } from './types/bcs'
+  compilerPayloadBcsType,
+  testOptBcsType,
+  TestOptions,
+} from 'types'
 
 export class MoveBuilder {
   private readonly packagePath: string
   private buildOptions: BuildOptions
 
   /**
-   *
-   * @param packagePath full path to package directory
-   * @param buildOptions move package build options
+   * Create a MoveBuilder.
+   * @param packagePath - Full path to package directory.
+   * @param buildOptions - Move package build options.
    */
   constructor(packagePath: string, buildOptions: BuildOptions) {
     this.packagePath = packagePath
     this.buildOptions = buildOptions
   }
 
-  makeRawBuildConfig = () => {
+  /**
+   * Create raw build configuration.
+   * @returns Raw build configuration.
+   */
+  private makeRawBuildConfig = () => {
     const additionalNamedAddresses: [string, Uint8Array][] = this.buildOptions
       .addtionalNamedAddresses
       ? this.buildOptions.addtionalNamedAddresses.map(([name, address]) => {
@@ -37,6 +41,7 @@ export class MoveBuilder {
           return [name, Buffer.from(address, 'hex')]
         })
       : []
+
     const compilerPayloadBytes = Buffer.from(
       compilerPayloadBcsType
         .serialize({
@@ -60,6 +65,7 @@ export class MoveBuilder {
         })
         .toBytes()
     )
+
     const compilerPayload = ref.alloc(ByteSliceViewType)
     const rawCompilerPayload = compilerPayload.deref()
     rawCompilerPayload.is_nil = false
@@ -68,14 +74,16 @@ export class MoveBuilder {
       compilerPayloadBytes.toString(),
       'utf-8'
     )
+
     return rawCompilerPayload
   }
 
   /**
-   *
-   * Execute move compiler to generate new move package
-   *
-   * @returns if success return "ok", else throw an error
+   * Execute move compiler to generate new move package.
+   * @param packageName - Name of the package.
+   * @param moveVersion - Version of the move (default is 'main').
+   * @param minitia - Boolean flag for minitia (default is false).
+   * @returns If success, return "ok", else throw an error.
    */
   public new(
     packageName: string,
@@ -98,6 +106,7 @@ export class MoveBuilder {
       ? ref.allocCString(moveVersion)
       : ref.NULL
     rawMoveVersionView.len = Buffer.from(moveVersion, 'utf-8').length
+
     return handleResponse(
       libcompiler.create_new_move_package.async,
       errMsg,
@@ -109,10 +118,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Execute move compiler to clean move package
-   *
-   * @returns if success return "ok", else throw an error
+   * Execute move compiler to clean move package.
+   * @param options - Options for cleaning the package.
+   * @returns If success, return "ok", else throw an error.
    */
   public async clean(options?: CleanOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
@@ -129,10 +137,8 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Execute move compiler to generate move bytecode
-   *
-   * @returns if success return "ok", else throw an error
+   * Execute move compiler to generate move bytecode.
+   * @returns If success, return "ok", else throw an error.
    */
   public async build(): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
@@ -146,11 +152,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
    * Return compiled Move module bytecode.
-   *
-   * @param moduleName the module name to retrieve
-   * @returns the module bytecode
+   * @param moduleName - The module name to retrieve.
+   * @returns The module bytecode.
    */
   public async get(moduleName: string): Promise<Buffer> {
     const moveTomlPath = path.join(this.packagePath, 'Move.toml')
@@ -180,12 +184,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Execute move compiler to unittest
-   *
-   * @param options move package test options
-   *
-   * @returns if success return "ok", else throw an error
+   * Execute move compiler to unittest.
+   * @param options - Move package test options.
+   * @returns If success, return "ok", else throw an error.
    */
   public async test(options?: TestOptions): Promise<FFIResult> {
     const errMsg = createRawErrMsg()
@@ -206,6 +207,7 @@ export class MoveBuilder {
     rawTestOpt.is_nil = false
     rawTestOpt.len = testOptBytes.length
     rawTestOpt.ptr = ref.allocCString(testOptBytes.toString(), 'utf-8')
+
     return handleResponse(
       libcompiler.test_move_package.async,
       errMsg,
@@ -215,12 +217,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Decode module bytes to move module
-   *
-   * @param moduleBytes move module bytes
-   *
-   * @returns if success return buffer, else throw an error
+   * Decode module bytes to move module.
+   * @param moduleBytes - Move module bytes.
+   * @returns If success, return buffer, else throw an error.
    */
   public static async decode_module_bytes(
     moduleBytes: Buffer
@@ -244,12 +243,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Decode script bytes to move function
-   *
-   * @param scriptBytes move script bytes
-   *
-   * @returns if success return buffer, else throw an error
+   * Decode script bytes to move function.
+   * @param scriptBytes - Move script bytes.
+   * @returns If success, return buffer, else throw an error.
    */
   public static async decode_script_bytes(
     scriptBytes: Buffer
@@ -273,12 +269,9 @@ export class MoveBuilder {
   }
 
   /**
-   *
-   * Read module info from bytes
-   *
-   * @param compiledBinary move compiled bytes
-   *
-   * @returns if success return buffer, else throw an error
+   * Read module info from bytes.
+   * @param compiledBinary - Move compiled bytes.
+   * @returns If success, return buffer, else throw an error.
    */
   public static async read_module_info(
     compiledBinary: Buffer

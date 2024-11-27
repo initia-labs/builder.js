@@ -1,6 +1,6 @@
-import { describe, expect, it } from '@jest/globals'
-import { MoveBuilder } from '../src/build'
 import path from 'path'
+import { MoveBuilder } from 'build'
+
 describe('create and clean new move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/new')
   const builder = new MoveBuilder(contractDir, {})

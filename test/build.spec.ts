@@ -1,12 +1,24 @@
-import { readFile } from 'fs/promises'
-import { MoveBuilder } from '../src/build'
 import path from 'path'
+import { readFile } from 'fs/promises'
+import { MoveBuilder } from 'build'
 
 describe('build move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/dummy')
   const builder = new MoveBuilder(path.resolve(__dirname, contractDir), {
     devMode: true,
-    addtionalNamedAddresses: [['test', '0x4']],
+    testMode: true,
+    generateDocs: true,
+    generateAbis: true,
+    forceRecompilation: true,
+    fetchDepsOnly: true,
+    skipFetchLatestGitDeps: true,
+    bytecodeVersion: 7,
+    compilerVersion: '2',
+    languageVersion: '1',
+    addtionalNamedAddresses: [
+      ['test', '0x4'],
+      ['test2', '0x5'],
+    ],
   })
   const dummyModulePath = path.join(
     contractDir,
@@ -24,33 +36,6 @@ describe('build move package', () => {
 
   it('decodes module bytes correctly', async () => {
     const binary = await builder.get('dummy')
-    // {
-    //   "address":"0x999",
-    //   "name":"dummy",
-    //   "friends":[],
-    //   "exposed_functions":
-    //   [
-    //     {
-    //       "name":"return_0",
-    //       "visibility":"public",
-    //       "is_entry":false,
-    //       "is_view":false,
-    //       "generic_type_params":[],
-    //       "params":[],
-    //       "return":["u32"]
-    //     },
-    //     {
-    //       "name":"return_10",
-    //       "visibility":"public",
-    //       "is_entry":false,
-    //       "is_view":false,
-    //       "generic_type_params":[],
-    //       "params":[],
-    //       "return":["u32"]
-    //     }
-    //   ],
-    //   "structs":[]
-    // }
     const expectedDecoded = JSON.stringify({
       address: '0x999',
       name: 'dummy',
@@ -93,10 +78,6 @@ describe('build move package', () => {
   it('reads module info correctly', async () => {
     const binary = await builder.get('dummy')
     const moduleInfo = await MoveBuilder.read_module_info(binary)
-    // {
-    //   "address":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,153],
-    //   "name":"dummy"
-    // }
     const expectedModuleInfo = JSON.stringify({
       address: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

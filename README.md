@@ -79,3 +79,95 @@ async function readExample() {
     console.log(decodedModule)
 }
 ```
+
+## Options
+
+For more details on the available options, refer to the [source code](src/types/options.ts).
+
+### BuildOptions
+The `BuildOptions` interface provides various options to customize the build process.
+
+```ts
+export interface BuildOptions {
+    devMode?: boolean
+    testMode?: boolean
+    generateDocs?: boolean
+    generateAbis?: boolean
+    installDir?: string
+    forceRecompilation?: boolean
+    fetchDepsOnly?: boolean
+    skipFetchLatestGitDeps?: boolean
+    bytecodeVersion?: number
+    compilerVersion?: string
+    languageVersion?: string
+    addtionalNamedAddresses?: [string, string][]
+}
+```
+
+### CleanOptions
+The `CleanOptions` interface provides options to clean the build artifacts.
+
+```ts
+export interface CleanOptions {
+    cleanCache?: boolean
+    cleanByProduct?: boolean
+    force?: boolean
+}
+```
+
+### TestOptions
+The `TestOptions` interface provides options to customize the testing process.
+
+```ts
+export interface TestOptions {
+    filter?: string
+    reportStatistics?: boolean
+    reportStorageOnError?: boolean
+    ignoreCompileWarnings?: boolean
+    computeCoverage?: boolean
+}
+```
+
+### BuildOptions
+The `BuildOptions` interface provides various options to customize the build process.
+
+```ts
+export interface BuildOptions {
+  devMode?: boolean
+  testMode?: boolean
+  generateDocs?: boolean
+  generateAbis?: boolean
+  installDir?: string
+  forceRecompilation?: boolean
+  fetchDepsOnly?: boolean
+  skipFetchLatestGitDeps?: boolean
+  bytecodeVersion?: number
+  compilerVersion?: string
+  languageVersion?: string
+  addtionalNamedAddresses?: [string, string][]
+}
+```
+
+### CleanOptions
+The `CleanOptions` interface provides options to clean the build artifacts.
+
+```ts
+export interface CleanOptions {
+  cleanCache?: boolean
+  cleanByProduct?: boolean
+  force?: boolean
+}
+```
+
+### TestOptions
+The `TestOptions` interface provides options to customize the testing process.
+
+```ts
+export interface TestOptions {
+  filter?: string
+  reportStatistics?: boolean
+  reportStorageOnError?: boolean
+  ignoreCompileWarnings?: boolean
+  computeCoverage?: boolean
+}
+```

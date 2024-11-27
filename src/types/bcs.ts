@@ -1,25 +1,6 @@
-import { bcs, BcsType } from '@mysten/bcs'
-
-interface CompilerBuildConfig {
-  [key: string]: BcsType<unknown, unknown>
-  dev_mode: BcsType<boolean>
-  test_mode: BcsType<boolean>
-  generate_docs: BcsType<boolean>
-  generate_abis: BcsType<boolean>
-  install_dir: BcsType<string | null, string | null | undefined>
-  force_recompilation: BcsType<boolean>
-  fetch_deps_only: BcsType<boolean>
-  skip_fetch_latest_git_deps: BcsType<boolean>
-  bytecode_version: BcsType<number>
-  compiler_version: BcsType<string>
-  language_version: BcsType<string>
-  additional_named_addresses: BcsType<
-    [string, Uint8Array][],
-    Iterable<readonly [string, Uint8Array]> & { length: number }
-  >
-}
-// Build Config with BCS
-const compilerBuildConfig: CompilerBuildConfig = {
+import { bcs } from '@mysten/bcs'
+// BCS Type for serializing CompilerBuildConfig
+const compilerBuildConfig = {
   dev_mode: bcs.bool(),
   test_mode: bcs.bool(),
   generate_docs: bcs.bool(),
@@ -36,12 +17,7 @@ const compilerBuildConfig: CompilerBuildConfig = {
   ),
 }
 
-export const compilerPayloadBcsType = bcs.struct('CompilerArguments', {
-  package_path: bcs.option(bcs.string()),
-  verbose: bcs.bool(),
-  build_config: bcs.struct('BuildConfig', compilerBuildConfig),
-})
-
+// BCS Type for serializing CompilerBuildConfig
 const testOption = {
   filter: bcs.option(bcs.string()),
   report_statistics: bcs.bool(),
@@ -49,5 +25,11 @@ const testOption = {
   ignore_compile_warnings: bcs.bool(),
   compute_coverage: bcs.bool(),
 }
+
+export const compilerPayloadBcsType = bcs.struct('CompilerArguments', {
+  package_path: bcs.option(bcs.string()),
+  verbose: bcs.bool(),
+  build_config: bcs.struct('BuildConfig', compilerBuildConfig),
+})
 
 export const testOptBcsType = bcs.struct('TestOptions', testOption)
