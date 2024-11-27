@@ -1,25 +1,25 @@
 
-<a id="0x999_dummy"></a>
+<a id="0x4_dummy"></a>
 
-# Module `0x999::dummy`
+# Module `0x4::dummy`
 
 
 
--  [Function `return_0`](#0x999_dummy_return_0)
--  [Function `return_10`](#0x999_dummy_return_10)
+-  [Function `return_0`](#0x4_dummy_return_0)
+-  [Function `return_10`](#0x4_dummy_return_10)
 
 
 <pre><code></code></pre>
 
 
 
-<a id="0x999_dummy_return_0"></a>
+<a id="0x4_dummy_return_0"></a>
 
 ## Function `return_0`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x999_dummy_return_0">return_0</a>(): u32
+<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x4_dummy_return_0">return_0</a>(): u32
 </code></pre>
 
 
@@ -28,7 +28,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x999_dummy_return_0">return_0</a>(): u32 {
+<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x4_dummy_return_0">return_0</a>(): u32 {
     0
 }
 </code></pre>
@@ -37,13 +37,13 @@
 
 </details>
 
-<a id="0x999_dummy_return_10"></a>
+<a id="0x4_dummy_return_10"></a>
 
 ## Function `return_10`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x999_dummy_return_10">return_10</a>(): u32
+<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x4_dummy_return_10">return_10</a>(): u32
 </code></pre>
 
 
@@ -52,7 +52,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x999_dummy_return_10">return_10</a>(): u32 {
+<pre><code><b>public</b> <b>fun</b> <a href="dummy.md#0x4_dummy_return_10">return_10</a>(): u32 {
     10
 }
 </code></pre>

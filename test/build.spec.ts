@@ -1,6 +1,6 @@
 import path from 'path'
 import { readFile } from 'fs/promises'
-import { MoveBuilder } from 'build'
+import { MoveBuilder } from 'builder'
 
 describe('build move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/dummy')
@@ -37,7 +37,7 @@ describe('build move package', () => {
   it('decodes module bytes correctly', async () => {
     const binary = await builder.get('dummy')
     const expectedDecoded = JSON.stringify({
-      address: '0x999',
+      address: '0x4',
       name: 'dummy',
       friends: [],
       exposed_functions: [
@@ -71,7 +71,7 @@ describe('build move package', () => {
   it('reads module info correctly', async () => {
     const binary = await builder.get('dummy')
     expect(await MoveBuilder.read_module_info(binary)).toEqual(
-      '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,153],"name":"dummy"}'
+      '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],"name":"dummy"}'
     )
   })
 
@@ -81,7 +81,7 @@ describe('build move package', () => {
     const expectedModuleInfo = JSON.stringify({
       address: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 9, 153,
+        0, 0, 0, 0, 0, 0, 0, 4,
       ],
       name: 'dummy',
     })

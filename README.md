@@ -111,7 +111,6 @@ The `CleanOptions` interface provides options to clean the build artifacts.
 export interface CleanOptions {
     cleanCache?: boolean
     cleanByProduct?: boolean
-    force?: boolean
 }
 ```
 
@@ -124,6 +123,5 @@ export interface TestOptions {
     reportStatistics?: boolean
     reportStorageOnError?: boolean
     ignoreCompileWarnings?: boolean
-    computeCoverage?: boolean
 }
 ```

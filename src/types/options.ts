@@ -2,23 +2,23 @@ export interface BuildOptions {
   /**
    * Compile in 'dev' mode. The 'dev-addresses' and 'dev-dependencies' fields will be used if
    * this flag is set. This flag is useful for development of packages that expose named
-   * addresses that are not set to a specific value.
+   * addresses that are not set to a specific value.(default false)
    */
   devMode?: boolean
 
   /**
    * Compile in 'test' mode. The 'dev-addresses' and 'dev-dependencies' fields will be used
-   * along with any code in the 'tests' directory.
+   * along with any code in the 'tests' directory.(default false)
    */
   testMode?: boolean
 
   /**
-   * Generate documentation for packages.
+   * Generate documentation for packages.(default false)
    */
   generateDocs?: boolean
 
   /**
-   * Generate ABIs for packages.
+   * Generate ABIs for packages.(default false)
    */
   generateAbis?: boolean
 
@@ -28,17 +28,17 @@ export interface BuildOptions {
   installDir?: string
 
   /**
-   * Force recompilation of all packages.
+   * Force recompilation of all packages.(default false)
    */
   forceRecompilation?: boolean
 
   /**
-   * Only fetch dependency repos to MOVE_HOME.
+   * Only fetch dependency repos to MOVE_HOME.(default false)
    */
   fetchDepsOnly?: boolean
 
   /**
-   * Skip fetching latest git dependencies.
+   * Skip fetching latest git dependencies.(default false)
    */
   skipFetchLatestGitDeps?: boolean
 
@@ -65,19 +65,14 @@ export interface BuildOptions {
 
 export interface CleanOptions {
   /**
-   * Flush cache directory.
+   * Flush cache directory. (default false)
    */
   cleanCache?: boolean
 
   /**
-   * Flush other byproducts from compiler. It only removes files and directories with default name.
+   * Flush other byproducts from compiler. It only removes files and directories with default name. (default false)
    */
   cleanByProduct?: boolean
-
-  /**
-   * Don't ask before commit.
-   */
-  force?: boolean
 }
 
 export interface TestOptions {
@@ -88,22 +83,17 @@ export interface TestOptions {
   filter?: string
 
   /**
-   * Report test statistics at the end of testing.
+   * Report test statistics at the end of testing.(default false)
    */
   reportStatistics?: boolean
 
   /**
-   * Show the storage state at the end of execution of a failing test.
+   * Show the storage state at the end of execution of a failing test.(default false)
    */
   reportStorageOnError?: boolean
 
   /**
-   * Ignore compiler's warning, and continue run tests.
+   * Ignore compiler's warning, and continue run tests.(default false)
    */
   ignoreCompileWarnings?: boolean
-
-  /**
-   * Collect coverage information for later use with the various `package coverage` subcommands.
-   */
-  computeCoverage?: boolean
 }

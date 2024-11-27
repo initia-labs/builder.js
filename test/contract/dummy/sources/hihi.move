@@ -1,4 +1,4 @@
-module 0x999::hihi {
+module test2::hihi {
     public fun return_0(): u32 {
         0
     }

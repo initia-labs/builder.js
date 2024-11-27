@@ -3,7 +3,7 @@ module.exports = {
   preset: 'ts-jest',
   roots: ['<rootDir>/test'],
   moduleNameMapper: {
-    '^build$': '<rootDir>/src/build.ts',
+    '^builder': '<rootDir>/src/builder.ts',
     '^types$': '<rootDir>/src/types',
     '^lib$': '<rootDir>/src/lib',
   }

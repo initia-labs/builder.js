@@ -132,7 +132,7 @@ export class MoveBuilder {
       rawCompilerArgsPayload,
       options?.cleanCache || false,
       options?.cleanByProduct || false,
-      options?.force === undefined ? true : options?.force
+      true
     )
   }
 
@@ -198,7 +198,7 @@ export class MoveBuilder {
           report_statistics: options?.reportStatistics || false,
           report_storage_on_error: options?.reportStorageOnError || false,
           ignore_compile_warnings: options?.ignoreCompileWarnings || false,
-          compute_coverage: options?.computeCoverage || false,
+          compute_coverage: false,
         })
         .toBytes()
     )
