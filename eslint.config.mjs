@@ -19,6 +19,14 @@ export default tseslint.config(
     files: ['**/*.js'],
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    files: ['**/test/**/*.ts', '**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off'
+    }
+  },
   eslintPluginPrettierRecommended,
   {
     ignores: ['dist/**/*', '**/*.config.mjs', '**/*.config.js'],

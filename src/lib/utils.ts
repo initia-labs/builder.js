@@ -1,5 +1,10 @@
 import ref from '@eleccookie/ref-napi'
-import { UnmanagedVectorType, FFIResult, MethodType, ErrMsgStruct } from 'types'
+import {
+  UnmanagedVectorType,
+  FFIResult,
+  MethodType,
+  ErrMsgStruct,
+} from '../types'
 import { Buffer } from 'buffer'
 
 /**
@@ -36,7 +41,11 @@ export async function handleResponse(
       } catch (error) {
         reject(
           new Error(
-            `Failed to process pointer. Error: ${error instanceof Error ? error.message : 'Unknown processing error'}`
+            `Failed to process pointer. Error: ${
+              error instanceof Error
+                ? error.message
+                : 'Unknown processing error'
+            }`
           )
         )
       }
