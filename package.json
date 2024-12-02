@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "Initia Foundation",
@@ -20,7 +20,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist/src",
+    "dist",
     "library"
   ],
   "engines": {

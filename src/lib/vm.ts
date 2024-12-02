@@ -5,7 +5,7 @@ import {
   UnmanagedVectorPtr,
   ByteSliceViewType,
   UnmanagedVectorType,
-} from 'types'
+} from '../types'
 
 let compilerName: string
 let movevmName: string

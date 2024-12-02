@@ -1,5 +1,5 @@
 import path from 'path'
-import { MoveBuilder } from 'builder'
+import { MoveBuilder } from '../src/builder'
 
 describe('create and clean new move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/new')
