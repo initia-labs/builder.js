@@ -1,5 +1,10 @@
 import ref from '@eleccookie/ref-napi'
-import { UnmanagedVectorType, FFIResult, MethodType, ErrMsgStruct } from 'types'
+import {
+  UnmanagedVectorType,
+  FFIResult,
+  MethodType,
+  ErrMsgStruct,
+} from '../types'
 import { Buffer } from 'buffer'
 
 /**

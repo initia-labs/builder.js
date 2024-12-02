@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import ref from '@eleccookie/ref-napi'
-import path = require('path')
+import * as path from 'path'
 import { readFile } from 'fs/promises'
-import { handleResponse, createRawErrMsg, libcompiler, libmovevm } from 'lib'
+import { handleResponse, createRawErrMsg, libcompiler, libmovevm } from './lib'
 import {
   ByteSliceViewType,
   FFIResult,
@@ -11,7 +11,7 @@ import {
   compilerPayloadBcsType,
   testOptBcsType,
   TestOptions,
-} from 'types'
+} from './types'
 
 export class MoveBuilder {
   private readonly packagePath: string

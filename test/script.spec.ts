@@ -1,6 +1,6 @@
 import path from 'path'
 import { readFile } from 'fs/promises'
-import { MoveBuilder } from 'builder'
+import { MoveBuilder } from '../src/builder'
 
 describe('build script and decode', () => {
   const contractDir = path.resolve(__dirname, 'contract/script')

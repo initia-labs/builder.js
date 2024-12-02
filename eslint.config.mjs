@@ -23,4 +23,13 @@ export default tseslint.config(
   {
     ignores: ['dist/**/*', '**/*.config.mjs', '**/*.config.js'],
   },
+  {
+    files: ['test/**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.eslint.json'],
+      },
+    },
+  },
+  
 )

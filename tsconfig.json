@@ -12,12 +12,19 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "sourceMap": true,
-    "baseUrl": "src",
-    "sourceRoot": "src",
-    "outDir": "dist",
+    "outDir": "./dist",
+    "rootDir": "src",
+    "baseUrl": "./",
     "typeRoots": [
       "src/types",
       "node_modules/@types"
-    ]
-  }
+    ],
+    "paths": {
+      "lib": ["lib/index"],
+      "types": ["types/index"],
+      "*": ["*"]
+    },
+  },
+  "include": ["src"],
+  "exclude": ["node_modules","test"]
 }
