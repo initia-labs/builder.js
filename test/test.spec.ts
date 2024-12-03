@@ -14,10 +14,12 @@ describe('test move package', () => {
       computeCoverage: true,
     })
     expect(testResult).toEqual('ok')
+    await builder.clean({})
   }, 100000000)
 
   it('executes tests without options', async () => {
     const testResult = await builder.test({})
     expect(testResult).toEqual('ok')
+    await builder.clean({})
   }, 100000000)
 })
