@@ -16,4 +16,7 @@ node_modules/
 
 dist/
 build/
+# generated file by movevm
+.trace
+.coverage_map.mvcov
 doc/
