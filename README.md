@@ -123,5 +123,6 @@ export interface TestOptions {
     reportStatistics?: boolean
     reportStorageOnError?: boolean
     ignoreCompileWarnings?: boolean
+    computeCoverage?: boolean
 }
 ```
