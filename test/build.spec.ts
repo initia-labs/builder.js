@@ -15,7 +15,7 @@ describe('build move package', () => {
     bytecodeVersion: 7,
     compilerVersion: '2',
     languageVersion: '1',
-    addtionalNamedAddresses: [
+    additionalNamedAddresses: [
       ['test', '0x4'],
       ['test2', '0x4c4e8f7def3c24453ae7eee7d9aee9b7556a26a0'],
     ],

@@ -33,8 +33,8 @@ export class MoveBuilder {
    */
   private makeRawBuildConfig = () => {
     const additionalNamedAddresses: [string, Uint8Array][] = this.buildOptions
-      .addtionalNamedAddresses
-      ? this.buildOptions.addtionalNamedAddresses.map(([name, address]) => {
+      .additionalNamedAddresses
+      ? this.buildOptions.additionalNamedAddresses.map(([name, address]) => {
           if (address.startsWith('0x')) {
             address = address.slice(2).padStart(64, '0')
           }

@@ -60,7 +60,7 @@ export interface BuildOptions {
   /**
    * Additional named address mapping. Useful for tools in Rust.
    */
-  addtionalNamedAddresses?: [string, string][]
+  additionalNamedAddresses?: [string, string][]
 }
 
 export interface CleanOptions {
