@@ -17,7 +17,7 @@ describe('build move package', () => {
     languageVersion: '1',
     addtionalNamedAddresses: [
       ['test', '0x4'],
-      ['test2', '0x5'],
+      ['test2', '0x4c4e8f7def3c24453ae7eee7d9aee9b7556a26a0'],
     ],
   })
   const dummyModulePath = path.join(
@@ -35,43 +35,76 @@ describe('build move package', () => {
   })
 
   it('decodes module bytes correctly', async () => {
-    const binary = await builder.get('dummy')
-    const expectedDecoded = JSON.stringify({
-      address: '0x4',
-      name: 'dummy',
-      friends: [],
-      exposed_functions: [
-        {
-          name: 'return_0',
-          visibility: 'public',
-          is_entry: false,
-          is_view: false,
-          generic_type_params: [],
-          params: [],
-          return: ['u32'],
-        },
-        {
-          name: 'return_10',
-          visibility: 'public',
-          is_entry: false,
-          is_view: false,
-          generic_type_params: [],
-          params: [],
-          return: ['u32'],
-        },
-      ],
-      structs: [],
-    })
+    const dummy = await builder.get('dummy')
 
-    expect(await MoveBuilder.decode_module_bytes(binary)).toEqual(
-      expectedDecoded
+    expect(await MoveBuilder.decode_module_bytes(dummy)).toEqual(
+      JSON.stringify({
+        address: '0x4',
+        name: 'dummy',
+        friends: [],
+        exposed_functions: [
+          {
+            name: 'return_0',
+            visibility: 'public',
+            is_entry: false,
+            is_view: false,
+            generic_type_params: [],
+            params: [],
+            return: ['u32'],
+          },
+          {
+            name: 'return_10',
+            visibility: 'public',
+            is_entry: false,
+            is_view: false,
+            generic_type_params: [],
+            params: [],
+            return: ['u32'],
+          },
+        ],
+        structs: [],
+      })
+    )
+    const hihi = await builder.get('hihi')
+
+    expect(await MoveBuilder.decode_module_bytes(hihi)).toEqual(
+      JSON.stringify({
+        address: '0x4c4e8f7def3c24453ae7eee7d9aee9b7556a26a0',
+        name: 'hihi',
+        friends: [],
+        exposed_functions: [
+          {
+            name: 'return_0',
+            visibility: 'public',
+            is_entry: false,
+            is_view: false,
+            generic_type_params: [],
+            params: [],
+            return: ['u32'],
+          },
+          {
+            name: 'return_10',
+            visibility: 'public',
+            is_entry: false,
+            is_view: false,
+            generic_type_params: [],
+            params: [],
+            return: ['u32'],
+          },
+        ],
+        structs: [],
+      })
     )
   })
 
   it('reads module info correctly', async () => {
-    const binary = await builder.get('dummy')
-    expect(await MoveBuilder.read_module_info(binary)).toEqual(
+    const dummy = await builder.get('dummy')
+    expect(await MoveBuilder.read_module_info(dummy)).toEqual(
       '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],"name":"dummy"}'
+    )
+    const hihi = await builder.get('hihi')
+    expect(await MoveBuilder.read_module_info(hihi)).toEqual(
+      '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,76,78,143,125,239,60,36,69,58,231,238,231,217,174,233,183,85,106,38,160],"name":"hihi"}'
     )
   })
 
