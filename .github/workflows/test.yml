@@ -1,12 +1,10 @@
 name: Test & Build builder.js
-
 on:
   workflow_dispatch:
   pull_request:
     paths:
       - 'src/**'
       - 'libcompiler.**'
-      - 'libmovevm.**'
       - 'package.json'
       - 'package-lock.json'
   push:
@@ -16,7 +14,6 @@ on:
     paths:
       - 'src/**'
       - 'libcompiler.**'
-      - 'libmovevm.**'
       - 'package.json'
       - 'package-lock.json'
 
@@ -29,18 +26,11 @@ jobs:
     name: Test & Build
     runs-on: ubuntu-latest
     env: 
+      # for private repo access
       GITHUB_ACCESS_TOKEN: ${{ secrets.GH_READ_TOKEN }}
       RUST_BACKTRACE: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - name: Install specific npm version
-        run: npm install -g npm@10.9.1
-      - name: Clean npm cache
-        run: npm cache clean --force
       - run: npm install
       - run: npm run build
       - run: npm run test

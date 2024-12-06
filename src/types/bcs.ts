@@ -1,5 +1,4 @@
 import { bcs } from '@initia/initia.js'
-
 // BCS Type for serializing CompilerBuildConfig
 const compilerBuildConfig = {
   dev_mode: bcs.bool(),
