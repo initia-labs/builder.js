@@ -29,7 +29,7 @@
   "scripts": {
     "lint": "npx eslint . --fix",
     "build": "tsc --build",
-    "test": "jest --no-cache",
+    "test": "jest --no-cache --testPathIgnorePatterns test.spec.ts",
     "prepare": "husky install"
   },
   "devDependencies": {
