@@ -37,6 +37,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      - name: Install latest npm
+        run: npm install -g npm@latest
       - run: npm install
       - run: npm run build
       - run: npm run test
