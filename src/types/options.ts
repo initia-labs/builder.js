@@ -96,4 +96,9 @@ export interface TestOptions {
    * Ignore compiler's warning, and continue run tests.(default false)
    */
   ignoreCompileWarnings?: boolean
+
+  /**
+   * Collect coverage information for later use with the various `move coverage` subcommands
+   */
+  computeCoverage?: boolean
 }

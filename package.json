@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "Initia Foundation",
@@ -29,7 +29,8 @@
   "scripts": {
     "lint": "npx eslint . --fix",
     "build": "tsc --build",
-    "test": "jest --no-cache",
+    "test": "jest --no-cache --testPathIgnorePatterns test.spec.ts",
+    "test-test": "jest test.spec.ts",
     "prepare": "husky install"
   },
   "devDependencies": {
