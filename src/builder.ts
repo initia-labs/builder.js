@@ -33,8 +33,8 @@ export class MoveBuilder {
    */
   private makeRawBuildConfig = () => {
     const additionalNamedAddresses: [string, Uint8Array][] = this.buildOptions
-      .addtionalNamedAddresses
-      ? this.buildOptions.addtionalNamedAddresses.map(([name, address]) => {
+      .additionalNamedAddresses
+      ? this.buildOptions.additionalNamedAddresses.map(([name, address]) => {
           if (address.startsWith('0x')) {
             address = address.slice(2).padStart(64, '0')
           }
@@ -71,8 +71,8 @@ export class MoveBuilder {
     rawCompilerPayload.is_nil = false
     rawCompilerPayload.len = compilerPayloadBytes.length
     rawCompilerPayload.ptr = ref.allocCString(
-      compilerPayloadBytes.toString(),
-      'utf-8'
+      compilerPayloadBytes.toString('base64'),
+      'base64'
     )
 
     return rawCompilerPayload
@@ -206,7 +206,7 @@ export class MoveBuilder {
     const rawTestOpt = testOpt.deref()
     rawTestOpt.is_nil = false
     rawTestOpt.len = testOptBytes.length
-    rawTestOpt.ptr = ref.allocCString(testOptBytes.toString(), 'utf-8')
+    rawTestOpt.ptr = ref.allocCString(testOptBytes.toString('base64'), 'base64')
 
     return handleResponse(
       libcompiler.test_move_package.async,
