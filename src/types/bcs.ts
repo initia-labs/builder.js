@@ -1,4 +1,4 @@
-import { bcs } from '@mysten/bcs'
+import { bcs } from '@initia/initia.js'
 // BCS Type for serializing CompilerBuildConfig
 const compilerBuildConfig = {
   dev_mode: bcs.bool(),
@@ -13,7 +13,7 @@ const compilerBuildConfig = {
   compiler_version: bcs.string(),
   language_version: bcs.string(),
   additional_named_addresses: bcs.vector(
-    bcs.tuple([bcs.string(), bcs.bytes(32)])
+    bcs.tuple([bcs.string(), bcs.address()])
   ),
 }
 

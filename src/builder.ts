@@ -32,16 +32,6 @@ export class MoveBuilder {
    * @returns Raw build configuration.
    */
   private makeRawBuildConfig = () => {
-    const additionalNamedAddresses: [string, Uint8Array][] = this.buildOptions
-      .addtionalNamedAddresses
-      ? this.buildOptions.addtionalNamedAddresses.map(([name, address]) => {
-          if (address.startsWith('0x')) {
-            address = address.slice(2).padStart(64, '0')
-          }
-          return [name, Buffer.from(address, 'hex')]
-        })
-      : []
-
     const compilerPayloadBytes = Buffer.from(
       compilerPayloadBcsType
         .serialize({
@@ -60,7 +50,8 @@ export class MoveBuilder {
             bytecode_version: this.buildOptions.bytecodeVersion || 0,
             compiler_version: this.buildOptions.compilerVersion || '0',
             language_version: this.buildOptions.languageVersion || '0',
-            additional_named_addresses: additionalNamedAddresses,
+            additional_named_addresses:
+              this.buildOptions.addtionalNamedAddresses || [],
           },
         })
         .toBytes()
@@ -71,8 +62,8 @@ export class MoveBuilder {
     rawCompilerPayload.is_nil = false
     rawCompilerPayload.len = compilerPayloadBytes.length
     rawCompilerPayload.ptr = ref.allocCString(
-      compilerPayloadBytes.toString(),
-      'utf-8'
+      compilerPayloadBytes.toString('base64'),
+      'base64'
     )
 
     return rawCompilerPayload
@@ -206,7 +197,7 @@ export class MoveBuilder {
     const rawTestOpt = testOpt.deref()
     rawTestOpt.is_nil = false
     rawTestOpt.len = testOptBytes.length
-    rawTestOpt.ptr = ref.allocCString(testOptBytes.toString(), 'utf-8')
+    rawTestOpt.ptr = ref.allocCString(testOptBytes.toString('base64'), 'base64')
 
     return handleResponse(
       libcompiler.test_move_package.async,

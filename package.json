@@ -1,6 +1,6 @@
 {
   "name": "@initia/builder.js",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "The JavaScript Move Builder for Initia",
   "license": "MIT",
   "author": "Initia Foundation",
@@ -56,7 +56,7 @@
   "dependencies": {
     "@eleccookie/ffi-napi": "^0.0.1",
     "@eleccookie/ref-napi": "^0.0.2",
-    "@mysten/bcs": "^1.1.0",
+    "@initia/initia.js": "^0.2.23",
     "ref-struct-di": "^1.1.1",
     "typescript-eslint": "^7.17.0"
   },
