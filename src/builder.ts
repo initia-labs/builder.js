@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import ref from '@eleccookie/ref-napi'
 import * as path from 'path'
-import { readFile } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import { handleResponse, createRawErrMsg, libcompiler, libmovevm } from './lib'
 import {
   ByteSliceViewType,
@@ -12,6 +12,8 @@ import {
   testOptBcsType,
   TestOptions,
 } from './types'
+
+type ModuleName = string
 
 export class MoveBuilder {
   private readonly packagePath: string
@@ -153,6 +155,52 @@ export class MoveBuilder {
 
   /**
    * Return compiled Move module bytecode.
+   * @returns The module bytecode.
+   */
+  public async getAll(): Promise<Record<ModuleName, Buffer>> {
+    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
+    const moveToml = await readFile(moveTomlPath)
+
+    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
+      moveToml.toString('utf-8')
+    )
+    if (packageNameLine === null || packageNameLine.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
+    if (packageName === null || packageName.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const bytecodePath = path.join(
+      this.packagePath,
+      'build',
+      packageName[0].slice(1, -1),
+      'bytecode_modules'
+    )
+
+    const files = await readdir(bytecodePath)
+    const bytecodeFiles = files.filter((file) => file.endsWith('.mv'))
+    const results = await Promise.all(
+      bytecodeFiles.map(async (file) => {
+        const name = file.slice(0, -3)
+        const content = await readFile(path.join(bytecodePath, file))
+        return { name, content }
+      })
+    )
+
+    return results.reduce(
+      (acc, { name, content }) => {
+        acc[name] = content
+        return acc
+      },
+      {} as Record<ModuleName, Buffer>
+    )
+  }
+
+  /**
+   * Return compiled Move module bytecode.
    * @param moduleName - The module name to retrieve.
    * @returns The module bytecode.
    */
@@ -178,6 +226,84 @@ export class MoveBuilder {
       packageName[0].slice(1, -1),
       'bytecode_modules',
       moduleName + '.mv'
+    )
+
+    return readFile(bytecodePath)
+  }
+
+  /**
+   * Return compiled Move module source map.
+   * @returns The module source map.
+   */
+  public async getAllSourceMaps(): Promise<Record<ModuleName, Buffer>> {
+    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
+    const moveToml = await readFile(moveTomlPath)
+
+    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
+      moveToml.toString('utf-8')
+    )
+    if (packageNameLine === null || packageNameLine.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
+    if (packageName === null || packageName.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const bytecodePath = path.join(
+      this.packagePath,
+      'build',
+      packageName[0].slice(1, -1),
+      'source_maps'
+    )
+
+    const files = await readdir(bytecodePath)
+    const bytecodeFiles = files.filter((file) => file.endsWith('.mvsm'))
+    const results = await Promise.all(
+      bytecodeFiles.map(async (file) => {
+        const name = file.slice(0, -5)
+        const content = await readFile(path.join(bytecodePath, file))
+        return { name, content }
+      })
+    )
+
+    return results.reduce(
+      (acc, { name, content }) => {
+        acc[name] = content
+        return acc
+      },
+      {} as Record<ModuleName, Buffer>
+    )
+  }
+
+  /**
+   * Return compiled Move module source map.
+   * @param moduleName - The module name to retrieve.
+   * @returns The module source map.
+   */
+  public async getSourceMap(moduleName: string): Promise<Buffer> {
+    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
+    const moveToml = await readFile(moveTomlPath)
+
+    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
+      moveToml.toString('utf-8')
+    )
+    if (packageNameLine === null || packageNameLine.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
+    if (packageName === null || packageName.length === 0) {
+      throw new Error('failed to lookup package name from Move.toml')
+    }
+
+    const bytecodePath = path.join(
+      this.packagePath,
+      'build',
+      packageName[0].slice(1, -1),
+      'source_maps',
+      moduleName + '.mvsm'
     )
 
     return readFile(bytecodePath)

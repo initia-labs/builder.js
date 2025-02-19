@@ -36,7 +36,6 @@ describe('build move package', () => {
 
   it('decodes module bytes correctly', async () => {
     const dummy = await builder.get('dummy')
-
     expect(await MoveBuilder.decode_module_bytes(dummy)).toEqual(
       JSON.stringify({
         address: '0x4',
@@ -98,11 +97,13 @@ describe('build move package', () => {
   })
 
   it('reads module info correctly', async () => {
-    const dummy = await builder.get('dummy')
+    const modules = await builder.getAll()
+    const dummy = modules['dummy']
+    const hihi = modules['hihi']
+
     expect(await MoveBuilder.read_module_info(dummy)).toEqual(
       '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],"name":"dummy"}'
     )
-    const hihi = await builder.get('hihi')
     expect(await MoveBuilder.read_module_info(hihi)).toEqual(
       '{"address":[0,0,0,0,0,0,0,0,0,0,0,0,76,78,143,125,239,60,36,69,58,231,238,231,217,174,233,183,85,106,38,160],"name":"hihi"}'
     )
