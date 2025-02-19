@@ -80,6 +80,22 @@ export class MoveBuilder {
     return rawCompilerPayload
   }
 
+  private async getPackageName(): Promise<string> {
+    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
+    const moveToml = await readFile(moveTomlPath)
+    const packageNameLine = new RegExp(/(name\s=\s"[0-9a-zA-Z_]+")/).exec(
+      moveToml.toString('utf-8')
+    )
+    if (packageNameLine === null || packageNameLine.length === 0) {
+      throw new Error('Move.toml is missing or has invalid "name" field format')
+    }
+    const packageName = new RegExp(/"[0-9a-zA-Z_]+"/).exec(packageNameLine[0])
+    if (packageName === null || packageName.length === 0) {
+      throw new Error('Move.toml is missing or has invalid "name" field format')
+    }
+    return packageName[0].slice(1, -1)
+  }
+
   /**
    * Execute move compiler to generate new move package.
    * @param packageName - Name of the package.
@@ -158,25 +174,11 @@ export class MoveBuilder {
    * @returns The module bytecode.
    */
   public async getAll(): Promise<Record<ModuleName, Buffer>> {
-    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
-    const moveToml = await readFile(moveTomlPath)
-
-    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
-      moveToml.toString('utf-8')
-    )
-    if (packageNameLine === null || packageNameLine.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
-    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
-    if (packageName === null || packageName.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
+    const packageName = await this.getPackageName()
     const bytecodePath = path.join(
       this.packagePath,
       'build',
-      packageName[0].slice(1, -1),
+      packageName,
       'bytecode_modules'
     )
 
@@ -205,25 +207,11 @@ export class MoveBuilder {
    * @returns The module bytecode.
    */
   public async get(moduleName: string): Promise<Buffer> {
-    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
-    const moveToml = await readFile(moveTomlPath)
-
-    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
-      moveToml.toString('utf-8')
-    )
-    if (packageNameLine === null || packageNameLine.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
-    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
-    if (packageName === null || packageName.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
+    const packageName = await this.getPackageName()
     const bytecodePath = path.join(
       this.packagePath,
       'build',
-      packageName[0].slice(1, -1),
+      packageName,
       'bytecode_modules',
       moduleName + '.mv'
     )
@@ -236,25 +224,11 @@ export class MoveBuilder {
    * @returns The module source map.
    */
   public async getAllSourceMaps(): Promise<Record<ModuleName, Buffer>> {
-    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
-    const moveToml = await readFile(moveTomlPath)
-
-    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
-      moveToml.toString('utf-8')
-    )
-    if (packageNameLine === null || packageNameLine.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
-    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
-    if (packageName === null || packageName.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
+    const packageName = await this.getPackageName()
     const bytecodePath = path.join(
       this.packagePath,
       'build',
-      packageName[0].slice(1, -1),
+      packageName,
       'source_maps'
     )
 
@@ -283,25 +257,12 @@ export class MoveBuilder {
    * @returns The module source map.
    */
   public async getSourceMap(moduleName: string): Promise<Buffer> {
-    const moveTomlPath = path.join(this.packagePath, 'Move.toml')
-    const moveToml = await readFile(moveTomlPath)
-
-    const packageNameLine = new RegExp(/(name\s=\s"[1-9a-zA-Z_]+")/).exec(
-      moveToml.toString('utf-8')
-    )
-    if (packageNameLine === null || packageNameLine.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
-
-    const packageName = new RegExp(/"[1-9a-zA-Z_]+"/).exec(packageNameLine[0])
-    if (packageName === null || packageName.length === 0) {
-      throw new Error('failed to lookup package name from Move.toml')
-    }
+    const packageName = await this.getPackageName()
 
     const bytecodePath = path.join(
       this.packagePath,
       'build',
-      packageName[0].slice(1, -1),
+      packageName,
       'source_maps',
       moduleName + '.mvsm'
     )

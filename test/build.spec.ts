@@ -109,6 +109,18 @@ describe('build move package', () => {
     )
   })
 
+  it('reads source maps correctly', async () => {
+    const sourceMaps = await builder.getAllSourceMaps()
+    const dummySourceMap = sourceMaps['dummy']
+    const hihiSourceMap = sourceMaps['hihi']
+
+    expect(dummySourceMap).toBeDefined()
+    expect(hihiSourceMap).toBeDefined()
+
+    const singleSourceMap = await builder.getSourceMap('dummy')
+    expect(singleSourceMap).toEqual(dummySourceMap)
+  })
+
   it('reads module info correctly', async () => {
     const binary = await builder.get('dummy')
     const moduleInfo = await MoveBuilder.read_module_info(binary)
