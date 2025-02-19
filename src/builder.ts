@@ -96,6 +96,29 @@ export class MoveBuilder {
     return packageName[0].slice(1, -1)
   }
 
+  private async readFiles(
+    subdir: string,
+    extension: string
+  ): Promise<Record<ModuleName, Buffer>> {
+    const packageName = await this.getPackageName()
+    const dirPath = path.join(this.packagePath, 'build', packageName, subdir)
+    const files = await readdir(dirPath)
+    const filteredFiles = files.filter((file) => file.endsWith(extension))
+    const results = await Promise.all(
+      filteredFiles.map(async (file) => {
+        const name = file.slice(0, -extension.length)
+        const content = await readFile(path.join(dirPath, file))
+        return { name, content }
+      })
+    )
+    return results.reduce(
+      (acc, { name, content }) => {
+        acc[name] = content
+        return acc
+      },
+      {} as Record<ModuleName, Buffer>
+    )
+  }
   /**
    * Execute move compiler to generate new move package.
    * @param packageName - Name of the package.
@@ -174,31 +197,7 @@ export class MoveBuilder {
    * @returns The module bytecode.
    */
   public async getAll(): Promise<Record<ModuleName, Buffer>> {
-    const packageName = await this.getPackageName()
-    const bytecodePath = path.join(
-      this.packagePath,
-      'build',
-      packageName,
-      'bytecode_modules'
-    )
-
-    const files = await readdir(bytecodePath)
-    const bytecodeFiles = files.filter((file) => file.endsWith('.mv'))
-    const results = await Promise.all(
-      bytecodeFiles.map(async (file) => {
-        const name = file.slice(0, -3)
-        const content = await readFile(path.join(bytecodePath, file))
-        return { name, content }
-      })
-    )
-
-    return results.reduce(
-      (acc, { name, content }) => {
-        acc[name] = content
-        return acc
-      },
-      {} as Record<ModuleName, Buffer>
-    )
+    return this.readFiles('bytecode_modules', '.mv')
   }
 
   /**
@@ -207,16 +206,11 @@ export class MoveBuilder {
    * @returns The module bytecode.
    */
   public async get(moduleName: string): Promise<Buffer> {
-    const packageName = await this.getPackageName()
-    const bytecodePath = path.join(
-      this.packagePath,
-      'build',
-      packageName,
-      'bytecode_modules',
-      moduleName + '.mv'
-    )
-
-    return readFile(bytecodePath)
+    const bytecodeModules = await this.readFiles('bytecode_modules', '.mv')
+    if (!bytecodeModules[moduleName]) {
+      throw new Error(`Bytecode for module ${moduleName} not found`)
+    }
+    return bytecodeModules[moduleName]
   }
 
   /**
@@ -224,31 +218,7 @@ export class MoveBuilder {
    * @returns The module source map.
    */
   public async getAllSourceMaps(): Promise<Record<ModuleName, Buffer>> {
-    const packageName = await this.getPackageName()
-    const bytecodePath = path.join(
-      this.packagePath,
-      'build',
-      packageName,
-      'source_maps'
-    )
-
-    const files = await readdir(bytecodePath)
-    const bytecodeFiles = files.filter((file) => file.endsWith('.mvsm'))
-    const results = await Promise.all(
-      bytecodeFiles.map(async (file) => {
-        const name = file.slice(0, -5)
-        const content = await readFile(path.join(bytecodePath, file))
-        return { name, content }
-      })
-    )
-
-    return results.reduce(
-      (acc, { name, content }) => {
-        acc[name] = content
-        return acc
-      },
-      {} as Record<ModuleName, Buffer>
-    )
+    return this.readFiles('source_maps', '.mvsm')
   }
 
   /**
@@ -257,17 +227,11 @@ export class MoveBuilder {
    * @returns The module source map.
    */
   public async getSourceMap(moduleName: string): Promise<Buffer> {
-    const packageName = await this.getPackageName()
-
-    const bytecodePath = path.join(
-      this.packagePath,
-      'build',
-      packageName,
-      'source_maps',
-      moduleName + '.mvsm'
-    )
-
-    return readFile(bytecodePath)
+    const sourceMaps = await this.readFiles('source_maps', '.mvsm')
+    if (!sourceMaps[moduleName]) {
+      throw new Error(`Source map for module ${moduleName} not found`)
+    }
+    return sourceMaps[moduleName]
   }
 
   /**
