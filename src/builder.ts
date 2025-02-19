@@ -82,7 +82,9 @@ export class MoveBuilder {
 
   private async getPackageName(): Promise<string> {
     const moveTomlPath = path.join(this.packagePath, 'Move.toml')
-    const moveToml = await readFile(moveTomlPath)
+    const moveToml = await readFile(moveTomlPath).catch(() => {
+      throw new Error('Move.toml file not found at ${moveTomlPath}')
+    })
     const packageNameLine = new RegExp(/(name\s=\s"[0-9a-zA-Z_]+")/).exec(
       moveToml.toString('utf-8')
     )
@@ -102,12 +104,21 @@ export class MoveBuilder {
   ): Promise<Record<ModuleName, Buffer>> {
     const packageName = await this.getPackageName()
     const dirPath = path.join(this.packagePath, 'build', packageName, subdir)
-    const files = await readdir(dirPath)
+    const files = await readdir(dirPath).catch(() => {
+      throw new Error(`Directory not found: ${dirPath}`)
+    })
     const filteredFiles = files.filter((file) => file.endsWith(extension))
+    if (filteredFiles.length === 0) {
+      throw new Error(
+        `No files found with extension "${extension}" in ${dirPath}`
+      )
+    }
     const results = await Promise.all(
       filteredFiles.map(async (file) => {
         const name = file.slice(0, -extension.length)
-        const content = await readFile(path.join(dirPath, file))
+        const content = await readFile(path.join(dirPath, file)).catch(() => {
+          throw new Error(`Failed to read file: ${file}`)
+        })
         return { name, content }
       })
     )
