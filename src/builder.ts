@@ -83,7 +83,7 @@ export class MoveBuilder {
   private async getPackageName(): Promise<string> {
     const moveTomlPath = path.join(this.packagePath, 'Move.toml')
     const moveToml = await readFile(moveTomlPath).catch(() => {
-      throw new Error('Move.toml file not found at ${moveTomlPath}')
+      throw new Error(`Move.toml file not found at ${moveTomlPath}`)
     })
     const packageNameLine = new RegExp(/(name\s=\s"[0-9a-zA-Z_]+")/).exec(
       moveToml.toString('utf-8')
