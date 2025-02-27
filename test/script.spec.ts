@@ -16,9 +16,15 @@ describe('build script and decode', () => {
       'contract/script/build/script/bytecode_scripts/even_0.mv'
     )
     const binary = await readFile(bytePath)
-    const decodedScript = await MoveBuilder.decode_script_bytes(binary)
-    expect(decodedScript).toEqual(
-      '{"name":"main","visibility":"public","is_entry":true,"is_view":false,"generic_type_params":[],"params":["u64"],"return":[]}'
-    )
+    const decodedScript = await MoveBuilder.decodeScriptBytes(binary)
+    expect(decodedScript).toEqual({
+      generic_type_params: [],
+      is_entry: true,
+      is_view: false,
+      name: 'main',
+      params: ['u64'],
+      return: [],
+      visibility: 'public',
+    })
   })
 })

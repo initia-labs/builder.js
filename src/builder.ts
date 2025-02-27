@@ -11,6 +11,9 @@ import {
   compilerPayloadBcsType,
   testOptBcsType,
   TestOptions,
+  DecodedModuleBytes,
+  DecodedScriptBytes,
+  ModuleInfo,
 } from './types'
 
 type ModuleName = string
@@ -283,9 +286,9 @@ export class MoveBuilder {
    * @param moduleBytes - Move module bytes.
    * @returns If success, return buffer, else throw an error.
    */
-  public static async decode_module_bytes(
+  public static async decodeModuleBytes(
     moduleBytes: Buffer
-  ): Promise<FFIResult> {
+  ): Promise<DecodedModuleBytes> {
     const errMsg = createRawErrMsg()
 
     const moduleBytesView = ref.alloc(ByteSliceViewType)
@@ -297,11 +300,15 @@ export class MoveBuilder {
     )
     rawModuleBytesView.len = moduleBytes.length
 
-    return handleResponse(
+    const response = await handleResponse(
       libmovevm.decode_module_bytes.async,
       errMsg,
       rawModuleBytesView
     )
+    if (response === null) {
+      throw new Error('Failed to decode module bytes')
+    }
+    return JSON.parse(response.toString()) as DecodedModuleBytes
   }
 
   /**
@@ -309,9 +316,9 @@ export class MoveBuilder {
    * @param scriptBytes - Move script bytes.
    * @returns If success, return buffer, else throw an error.
    */
-  public static async decode_script_bytes(
+  public static async decodeScriptBytes(
     scriptBytes: Buffer
-  ): Promise<FFIResult> {
+  ): Promise<DecodedScriptBytes> {
     const errMsg = createRawErrMsg()
 
     const scriptBytesView = ref.alloc(ByteSliceViewType)
@@ -323,11 +330,15 @@ export class MoveBuilder {
     )
     rawScriptBytesView.len = scriptBytes.length
 
-    return handleResponse(
+    const response = await handleResponse(
       libmovevm.decode_script_bytes.async,
       errMsg,
       rawScriptBytesView
     )
+    if (response === null) {
+      throw new Error('Failed to decode module bytes')
+    }
+    return JSON.parse(response.toString()) as DecodedScriptBytes
   }
 
   /**
@@ -335,9 +346,9 @@ export class MoveBuilder {
    * @param compiledBinary - Move compiled bytes.
    * @returns If success, return buffer, else throw an error.
    */
-  public static async read_module_info(
+  public static async readModuleInfo(
     compiledBinary: Buffer
-  ): Promise<FFIResult> {
+  ): Promise<ModuleInfo> {
     const errMsg = createRawErrMsg()
 
     const compiledView = ref.alloc(ByteSliceViewType)
@@ -349,10 +360,23 @@ export class MoveBuilder {
     )
     rawCompiledView.len = compiledBinary.length
 
-    return handleResponse(
+    const response = await handleResponse(
       libmovevm.read_module_info.async,
       errMsg,
       rawCompiledView
     )
+    if (response === null) {
+      throw new Error('Failed to decode module bytes')
+    }
+
+    const res = JSON.parse(response.toString()) as {
+      address: number[]
+      name: string
+    }
+    return {
+      address:
+        '0x' + Buffer.from(res.address).toString('hex').replace(/^0+/, ''),
+      name: res.name,
+    }
   }
 }
