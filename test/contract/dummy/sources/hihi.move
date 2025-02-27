@@ -1,5 +1,9 @@
 module test::hihi {
     use test::dummy;
+    
+    struct HiHi has store {
+        count: u64
+    }
 
     public fun return_0(): u32 {
         0

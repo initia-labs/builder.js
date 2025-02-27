@@ -102,7 +102,15 @@ describe('build move package', () => {
           return: ['u32'],
         },
       ],
-      structs: [],
+      structs: [
+        {
+          name: 'HiHi',
+          is_native: false,
+          abilities: ['store'],
+          generic_type_params: [],
+          fields: [{ name: 'count', type: 'u64' }],
+        },
+      ],
     })
   })
 
