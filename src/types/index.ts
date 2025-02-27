@@ -3,6 +3,7 @@ import ref from '@eleccookie/ref-napi'
 export * from './options'
 export * from './bcs'
 export * from './ffi'
+export * from './type'
 
 const StructType = struct(ref)
 

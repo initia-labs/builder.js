@@ -1,9 +1,15 @@
 module test::dummy {
+    friend test::hihi;
+    
     public fun return_0(): u32 {
         0
     }
 
     public fun return_10(): u32 {
+        10
+    }
+
+    public(friend) fun return_10_by_friend(): u32 {
         10
     }
 
