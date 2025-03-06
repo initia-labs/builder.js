@@ -41,7 +41,7 @@ export class MoveBuilder {
    * - version of move compiler
    * - version of move language version
    */
-  static getDefaultValues() {
+  static getDefaultVersions() {
     return {
       bytecodeVersion: DEFAULT_BYTECODE_VERSION,
       compilerVersion: DEFAULT_COMPILER_VERSION,

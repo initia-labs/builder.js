@@ -24,7 +24,7 @@ describe('build move package', () => {
   jest.setTimeout(200000)
 
   it('get default values of move builder', () => {
-    expect(MoveBuilder.getDefaultValues()).toEqual({
+    expect(MoveBuilder.getDefaultVersions()).toEqual({
       bytecodeVersion: 6,
       compilerVersion: '2',
       languageVersion: '2',
