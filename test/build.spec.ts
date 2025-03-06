@@ -23,6 +23,14 @@ describe('build move package', () => {
   )
   jest.setTimeout(200000)
 
+  it('get default values of move builder', () => {
+    expect(MoveBuilder.getDefaultVersions()).toEqual({
+      bytecodeVersion: 6,
+      compilerVersion: '2',
+      languageVersion: '2',
+    })
+  })
+
   it('builds the package correctly', async () => {
     const buildResult = await builder.build()
     const expectedBinary = await readFile(dummyModulePath)

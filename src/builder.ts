@@ -18,6 +18,9 @@ import {
 
 type ModuleName = string
 
+const DEFAULT_BYTECODE_VERSION = 6
+const DEFAULT_LANGUAGE_VERSION = '2'
+const DEFAULT_COMPILER_VERSION = '2'
 export class MoveBuilder {
   private readonly packagePath: string
   private buildOptions: BuildOptions
@@ -32,6 +35,19 @@ export class MoveBuilder {
     this.buildOptions = buildOptions
   }
 
+  /**
+   * Get default value of a Movebuiler
+   * - version of bytecode
+   * - version of move compiler
+   * - version of move language version
+   */
+  static getDefaultVersions() {
+    return {
+      bytecodeVersion: DEFAULT_BYTECODE_VERSION,
+      compilerVersion: DEFAULT_COMPILER_VERSION,
+      languageVersion: DEFAULT_LANGUAGE_VERSION,
+    }
+  }
   /**
    * Create raw build configuration.
    * @returns Raw build configuration.
@@ -62,9 +78,12 @@ export class MoveBuilder {
             fetch_deps_only: this.buildOptions.fetchDepsOnly || false,
             skip_fetch_latest_git_deps:
               this.buildOptions.skipFetchLatestGitDeps || false,
-            bytecode_version: this.buildOptions.bytecodeVersion || 0,
-            compiler_version: this.buildOptions.compilerVersion || '0',
-            language_version: this.buildOptions.languageVersion || '0',
+            bytecode_version:
+              this.buildOptions.bytecodeVersion || DEFAULT_BYTECODE_VERSION,
+            compiler_version:
+              this.buildOptions.compilerVersion || DEFAULT_COMPILER_VERSION,
+            language_version:
+              this.buildOptions.languageVersion || DEFAULT_LANGUAGE_VERSION,
             additional_named_addresses: additionalNamedAddresses,
           },
         })
