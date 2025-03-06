@@ -19,8 +19,8 @@ import {
 type ModuleName = string
 
 const DEFAULT_BYTECODE_VERSION = 6
-const DEFAULT_LANGUAGE_VERSION = '1'
-const DEFAULT_COMPILER_VERSION = '1'
+const DEFAULT_LANGUAGE_VERSION = '2'
+const DEFAULT_COMPILER_VERSION = '2'
 export class MoveBuilder {
   private readonly packagePath: string
   private buildOptions: BuildOptions

@@ -13,7 +13,7 @@ describe('build script and decode', () => {
   it('decodes script bytes', async () => {
     const bytePath = path.resolve(
       __dirname,
-      'contract/script/build/script/bytecode_scripts/even.mv'
+      'contract/script/build/script/bytecode_scripts/even_0.mv'
     )
     const binary = await readFile(bytePath)
     const decodedScript = await MoveBuilder.decodeScriptBytes(binary)
