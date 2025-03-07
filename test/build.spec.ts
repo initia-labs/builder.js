@@ -25,7 +25,7 @@ describe('build move package', () => {
 
   it('get default values of move builder', () => {
     expect(MoveBuilder.getDefaultVersions()).toEqual({
-      bytecodeVersion: 6,
+      bytecodeVersion: 7,
       compilerVersion: '2',
       languageVersion: '2',
     })
