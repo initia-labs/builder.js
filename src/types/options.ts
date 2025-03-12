@@ -1,3 +1,20 @@
+export enum BytecodeVersion {
+  V6 = 6,
+  V7 = 7,
+}
+
+export enum LanguageVersion {
+  V1 = '1',
+  V2_0 = '2.0',
+  V2_1 = '2.1',
+}
+
+export enum CompilerVersion {
+  V1 = '1',
+  V2_0 = '2.0',
+  V2_1 = '2.1',
+}
+
 export interface BuildOptions {
   /**
    * Compile in 'dev' mode. The 'dev-addresses' and 'dev-dependencies' fields will be used if
@@ -43,19 +60,19 @@ export interface BuildOptions {
   skipFetchLatestGitDeps?: boolean
 
   /**
-   * Bytecode version. Set to 0 to unset and use default.
+   * Bytecode version. unset and use default.
    */
-  bytecodeVersion?: number
+  bytecodeVersion?: BytecodeVersion
 
   /**
-   * Compiler version. Set to 0 to unset and use default.
+   * Compiler version. unset and use default.
    */
-  compilerVersion?: string
+  compilerVersion?: CompilerVersion
 
   /**
-   * Language version. Set to 0 to unset and use default.
+   * Language version. unset and use default.
    */
-  languageVersion?: string
+  languageVersion?: LanguageVersion
 
   /**
    * Additional named address mapping. Useful for tools in Rust.

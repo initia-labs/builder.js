@@ -1,6 +1,7 @@
 import path from 'path'
 import { readFile } from 'fs/promises'
 import { MoveBuilder } from '../src/builder'
+import { BytecodeVersion, CompilerVersion, LanguageVersion } from '../src/types'
 
 describe('build move package', () => {
   const contractDir = path.resolve(__dirname, 'contract/dummy')
@@ -12,9 +13,9 @@ describe('build move package', () => {
     forceRecompilation: true,
     fetchDepsOnly: true,
     skipFetchLatestGitDeps: true,
-    bytecodeVersion: 7,
-    compilerVersion: '2',
-    languageVersion: '1',
+    bytecodeVersion: BytecodeVersion.V7,
+    compilerVersion: CompilerVersion.V2_1,
+    languageVersion: LanguageVersion.V2_1,
     additionalNamedAddresses: [['test', '0x4']],
   })
   const dummyModulePath = path.join(
@@ -25,9 +26,9 @@ describe('build move package', () => {
 
   it('get default values of move builder', () => {
     expect(MoveBuilder.getDefaultVersions()).toEqual({
-      bytecodeVersion: 7,
-      compilerVersion: '2',
-      languageVersion: '2',
+      bytecodeVersion: BytecodeVersion.V7,
+      compilerVersion: CompilerVersion.V2_1,
+      languageVersion: LanguageVersion.V2_1,
     })
   })
 
