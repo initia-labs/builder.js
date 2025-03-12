@@ -80,6 +80,27 @@ async function readExample() {
 }
 ```
 
+### Test Move Package
+```ts
+import { MoveBuilder } from '@initia/builder.js';
+
+async function testExample() {
+    const builder = new MoveBuilder(path.resolve(__dirname, 'moon_coin'), {});
+    // test module with options
+    const testResult = await builder.test({
+      filter: '...',
+      reportStatistics: true,
+      reportStorageOnError: true,
+      ignoreCompileWarnings: true,
+      computeCoverage: true,
+    })
+    console.log(testResult) // 'ok'
+}
+```
+> **⚠ WARNING:**  
+> If the test fails due to a native function conflict, note that `builder.js` always follows the latest MoveVM version.  
+> If you are using an older version of MoveVM, you need to replace the library used in `@initia/builder.js/library`.  
+> You should replace the `.so` files in `node_modules/@initia/builder.js/library` with the `.so` libraries from the movevm version you are using.  
 ## Options
 
 For more details on the available options, refer to the [source code](src/types/options.ts).

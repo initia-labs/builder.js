@@ -14,13 +14,16 @@ import {
   DecodedModuleBytes,
   DecodedScriptBytes,
   ModuleInfo,
+  BytecodeVersion,
+  LanguageVersion,
+  CompilerVersion,
 } from './types'
 
 type ModuleName = string
 
-const DEFAULT_BYTECODE_VERSION = 7
-const DEFAULT_LANGUAGE_VERSION = '2'
-const DEFAULT_COMPILER_VERSION = '2'
+const DEFAULT_BYTECODE_VERSION = BytecodeVersion.V7
+const DEFAULT_LANGUAGE_VERSION = LanguageVersion.V2_1
+const DEFAULT_COMPILER_VERSION = CompilerVersion.V2_1
 export class MoveBuilder {
   private readonly packagePath: string
   private buildOptions: BuildOptions
